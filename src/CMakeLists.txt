@@ -1,6 +1,9 @@
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
-file(GLOB SOURCES ./*.cpp)
+file(GLOB SOURCES
+    intro_to_sfml.cpp
+    gravity.cpp
+)
 foreach(source_file ${SOURCES})
     # 获取文件名（不带路径和扩展名）
     get_filename_component(target_name ${source_file} NAME_WE)
