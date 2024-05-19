@@ -1,6 +1,5 @@
 #include "game_typdef.h"
 #include <vector>
-#include <SFML/Graphics.hpp>
 
 class Object;
 
