@@ -3,8 +3,8 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 file(GLOB SOURCES
     intro_to_sfml.cpp
     gravity.cpp
-    ECS.cpp
 )
+
 foreach(source_file ${SOURCES})
     # 获取文件名（不带路径和扩展名）
     get_filename_component(target_name ${source_file} NAME_WE)
@@ -18,4 +18,4 @@ foreach(source_file ${SOURCES})
     target_compile_features(${target_name} PRIVATE cxx_std_17)
 endforeach()
 
-# 链接SFML库
+add_subdirectory(ECS)

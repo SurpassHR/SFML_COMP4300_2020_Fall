@@ -12,10 +12,6 @@
 #define GAME_F32 float
 #define GAME_F64 double
 
-#define GAME_VEC_U16 sf::Vector2u;
-#define GAME_VEC_F32 sf::Vector2f;
-#define GAME_VEC_F64 sf::Vector2d;
-
 #define GAME_STR std::string
 
 #define GAME_OK 0

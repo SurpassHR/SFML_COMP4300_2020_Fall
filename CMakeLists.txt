@@ -14,6 +14,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 find_package(SFML 2.5 COMPONENTS graphics audio REQUIRED)
 
 # 添加头文件目录
-add_subdirectory(include)
+include_directories(include)
 # 添加源文件目录
 add_subdirectory(src)
