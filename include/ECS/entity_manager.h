@@ -2,7 +2,7 @@
 #define ENTITY_MANAGER_H
 
 #include <vector>
-#include "game_typdef.h"
+#include <SFML/Graphics.hpp>
 #include "entity.h"
 
 class EntityManager {

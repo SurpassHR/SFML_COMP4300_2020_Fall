@@ -1,4 +1,5 @@
 #include <iostream>
+#include <SFML/Graphics.hpp>
 #include "game_typdef.h"
 
 #define WINDOW_WIDTH 800

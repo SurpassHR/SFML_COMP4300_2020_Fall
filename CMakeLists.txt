@@ -15,5 +15,6 @@ find_package(SFML 2.5 COMPONENTS graphics audio REQUIRED)
 
 # 添加头文件目录
 include_directories(include)
+include_directories(include/ECS)
 # 添加源文件目录
 add_subdirectory(src)
