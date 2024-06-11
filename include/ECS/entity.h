@@ -4,9 +4,7 @@
 #include <memory>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Shape.hpp>
-#include "shape.h"
-#include "transform.h"
-#include "name.h"
+#include <SFML/Graphics/Text.hpp>
 #include "bounding_box.h"
 
 class Entity {
