@@ -11,6 +11,8 @@ set(CMAKE_CXX_COMPILER g++)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 # 查找SFML库
+set(LIB_SFML $ENV{SFML}/lib)
+set(SFML_DIR ${LIB_SFML}/cmake/SFML)
 find_package(SFML 2.5 COMPONENTS graphics audio REQUIRED)
 
 # 添加头文件目录
