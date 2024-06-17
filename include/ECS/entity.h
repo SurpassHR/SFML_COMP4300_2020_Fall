@@ -9,9 +9,13 @@
 
 class Entity {
 public:
-    Entity(sf::Vector2f pos, sf::Vector2f velocity) : m_pos(pos), m_velocity(velocity) {}
+    Entity(const std::string tag, unsigned int id) : m_tag(tag), m_id(id) {}
     virtual ~Entity() {}
 public:
+    const std::string Tag() { return m_tag; }
+    const unsigned int Id() { return m_id; }
+    bool IsDead() { return m_isDead; }
+
     // getters and setters
     sf::Vector2f Pos() const { return m_pos; }
     void SetPos(const sf::Vector2f &pos) { m_pos = pos; }
@@ -32,6 +36,10 @@ public:
     void setBBox(const std::shared_ptr<BoundingBox> &bBox) { m_bBox = bBox; }
 private:
     // components
+    const std::string m_tag;
+    const unsigned int m_id;
+    bool m_isDead{ false };
+
     sf::Vector2f m_pos{ 0.0f, 0.0f };
     sf::Vector2f m_velocity{ 0.0f, 0.0f };
 
