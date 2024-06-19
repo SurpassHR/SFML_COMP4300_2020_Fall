@@ -17,6 +17,7 @@
     ],
     "clangd.fallbackFlags": [
         "-std=c++14",
+        "--target=x86_64-w64-mingw", // 重要，直接可以使用系统变量/用户变量Path中配置好的MinGW路径
         "-I${workspaceFolder}",
     ],
 }
