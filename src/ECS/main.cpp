@@ -1,3 +1,5 @@
+#include <cstdlib>
+#include <iostream>
 #include "game_typdef.h"
 #include "entity_manager.h"
 
@@ -9,6 +11,18 @@ void ProcKeyPressEvent(sf::RenderWindow &window)
             window.close();
         }
     }
+}
+
+int GetRandomNumber(int floor, int ceil) 
+{
+    int sign = (ceil - floor) / std::abs(ceil - floor);
+    // the number of integers from floor to ceil
+    int diff = std::abs(ceil - floor) + 1;
+    // set the seed of rand generator
+    srand(time(nullptr));
+    int randomVal = std::rand();
+    // get the possible value in range(abs(floor), abs(ceil))
+    return sign * (floor + (randomVal % diff));
 }
 
 void GameLoop()
@@ -32,6 +46,9 @@ void GameLoop()
         window.clear(sf::Color::Black);
 
         // proc some logic
+        // int floor = 10;
+        // int ceil = 20;
+        // std::cout << "rand: " << GetRandomNumber(floor, ceil) << std::endl;
 
         // proc entity status
         eMgr.ProcEntity(window);
