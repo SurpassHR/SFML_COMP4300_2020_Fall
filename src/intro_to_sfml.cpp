@@ -1,6 +1,5 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
-#include "game_typdef.h"
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
@@ -109,8 +108,8 @@ int main() {
     // 设置文本位置
     text.setPosition(0, WINDOW_HEIGHT - text.getLocalBounds().height - 3);
     // 设置圆形的初始速度
-    GAME_F32 circleSpeedX = 1.5f;
-    GAME_F32 circleSpeedY = 2.5f;
+    float circleSpeedX = 1.5f;
+    float circleSpeedY = 2.5f;
     // 窗口主题循环
     while (window.isOpen()) {
         window.clear(sf::Color::Black);

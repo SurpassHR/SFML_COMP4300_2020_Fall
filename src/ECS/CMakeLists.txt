@@ -1,6 +1,7 @@
-include_directories(${CMAKE_SOURCE_DIR}/include)
-
 file(GLOB SOURCES ./*.cpp)
+
+# 添加头文件目录
+include_directories(${CMAKE_SOURCE_DIR}/include/ECS)
 
 set(ecs_target_name "ECS")
 add_executable(${ecs_target_name} ${SOURCES})

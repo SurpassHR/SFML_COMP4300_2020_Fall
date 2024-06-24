@@ -1,4 +1,3 @@
-#include "game_typdef.h"
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
 #include <vector>
@@ -15,19 +14,19 @@ public:
 
 public:
     void SetSpeed(sf::Vector2f speed) { m_speedX = speed.x; m_speedY = speed.y; }
-    GAME_F32 GetSpeedX() { return m_speedX; }
-    GAME_F32 GetSpeedY() { return m_speedY; }
+    float GetSpeedX() { return m_speedX; }
+    float GetSpeedY() { return m_speedY; }
 
 private:
     // 运动状态
-    GAME_F32 m_speedX{ 0 };
-    GAME_F32 m_speedY{ 0 };
+    float m_speedX{ 0 };
+    float m_speedY{ 0 };
 };
 
 void InitItemPosition(sf::RenderWindow &root, Object &obj)
 {
     sf::Vector2u windPos = root.getSize();
-    obj.setPosition({ static_cast<GAME_F32>(windPos.x) / 2, static_cast<GAME_F32>(windPos.y) / 2 });
+    obj.setPosition({ static_cast<float>(windPos.x) / 2, static_cast<float>(windPos.y) / 2 });
 }
 
 void InitItemSpeed(Object &obj)
@@ -35,25 +34,25 @@ void InitItemSpeed(Object &obj)
     obj.SetSpeed({ 0, 0 });
 }
 
-void RefreshSpeed(sf::RenderWindow &window, Object &obj, GAME_F32 deltaTime)
+void RefreshSpeed(sf::RenderWindow &window, Object &obj, float deltaTime)
 {
     sf::Vector2u windSize = window.getSize();
-    GAME_F32 objY = obj.getPosition().y;
-    GAME_F32 objR = obj.getRadius();
+    float objY = obj.getPosition().y;
+    float objR = obj.getRadius();
     // 下边缘碰撞检测
-    if (objY + objR + 5.0f >= static_cast<GAME_F32>(windSize.y)) {
+    if (objY + objR + 5.0f >= static_cast<float>(windSize.y)) {
         obj.SetSpeed({ obj.GetSpeedX(), -obj.GetSpeedY() });
-        obj.SetSpeed({ static_cast<GAME_F32>(obj.GetSpeedX()), static_cast<GAME_F32>((obj.GetSpeedY())) * 0.5f });
+        obj.SetSpeed({ static_cast<float>(obj.GetSpeedX()), static_cast<float>((obj.GetSpeedY())) * 0.5f });
     } else if (objY - objR <= 0) {
         obj.SetSpeed({ obj.GetSpeedX(), -obj.GetSpeedY() });
-        obj.SetSpeed({ static_cast<GAME_F32>(obj.GetSpeedX()), static_cast<GAME_F32>((obj.GetSpeedY())) * 0.5f });
+        obj.SetSpeed({ static_cast<float>(obj.GetSpeedX()), static_cast<float>((obj.GetSpeedY())) * 0.5f });
     }
     // 动能损耗
     // 重力加速度
-    obj.SetSpeed({ obj.GetSpeedX(), obj.GetSpeedY() + static_cast<GAME_F32>(GAME_G * 10) * deltaTime });
+    obj.SetSpeed({ obj.GetSpeedX(), obj.GetSpeedY() + static_cast<float>(9.8f * 10) * deltaTime });
 }
 
-GAME_U32 VideoLoop()
+unsigned VideoLoop()
 {
     sf::RenderWindow window(sf::VideoMode(1024, 768), "SFML Gravity");
     // 设置窗口帧率限制165Hz
@@ -66,7 +65,7 @@ GAME_U32 VideoLoop()
     // 初始化图形
     for (auto &iter : g_itemList) {
         if (iter == nullptr) {
-            return GAME_ERR;
+            return 1;
         }
         InitItemPosition(window, *iter);
         InitItemSpeed(*iter);
@@ -80,13 +79,13 @@ GAME_U32 VideoLoop()
             }
         }
         // 获取前后两帧时间间隔
-        GAME_F32 deltaTime = clock.restart().asSeconds();
+        float deltaTime = clock.restart().asSeconds();
         // 更新画面
         window.clear(sf::Color::Black);
         // 创建图形
         for (auto &iter : g_itemList) {
             if (iter == nullptr) {
-                return GAME_ERR;
+                return 1;
             }
             iter->setPosition(iter->getPosition().x + iter->GetSpeedX() * deltaTime, iter->getPosition().y + iter->GetSpeedY() * deltaTime);
             RefreshSpeed(window, *iter, deltaTime);
@@ -94,10 +93,10 @@ GAME_U32 VideoLoop()
         }
         window.display();
     }
-    return GAME_OK;
+    return 0;
 }
 
-GAME_I32 main()
+int main()
 {
     Object o1;
     o1.setFillColor(sf::Color::Red);

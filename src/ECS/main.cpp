@@ -1,5 +1,4 @@
 #include <cstdlib>
-#include "game_typdef.h"
 #include "entity_manager.h"
 
 void ProcKeyPressEvent(sf::RenderWindow &window)
@@ -56,9 +55,9 @@ void GameLoop()
     }
 }
 
-GAME_I32 main()
+int main()
 {
     GameLoop();
 
-    return GAME_OK;
+    return 0;
 }

@@ -1,5 +1,3 @@
-include_directories(${CMAKE_SOURCE_DIR}/include)
-
 file(GLOB SOURCES
     intro_to_sfml.cpp
     gravity.cpp
@@ -19,3 +17,4 @@ foreach(source_file ${SOURCES})
 endforeach()
 
 add_subdirectory(ECS)
+add_subdirectory(Assignment2)
