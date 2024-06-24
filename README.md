@@ -1,5 +1,9 @@
 # 学习SFML库记录
 
+- 声明: 本学习记录内容来自 David Churchill 教授的 2020 Fall COMP4300 课程，课程教授的ECS架构、数据与逻辑分离的理念等，
+与我在工作上使用的一些设计思想不谋而合。在个人项目中以小游戏项目的方式相互印证的方法，来掌握工作一年来所学知识，
+趣味性与实用性相结合，大赞。
+
 ## 开发环境配置
 
 1. 配置vscode clangd cmake环境
@@ -27,6 +31,7 @@
 
 -   配置 `LD_LIBRARY_PATH` 和 `LIBRARY_PATH` 中的SFML库位置，`SFML=x:\path\to\sfml\root`
 -   配置 `LD_LIBRARY_PATH` 和 `LIBRARY_PATH` 到系统变量的 `Path`，`LD_LIBRARY_PATH/LIBRARY_PATH=%SFML%\bin`
+-   将 `%SFML%\lib`、`%SFML%\include` 也包含到路径中
 -   配置项目 `CMakeLists.txt` 查找SFML库
 
 3. 开发环境问题及定位解决
