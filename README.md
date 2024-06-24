@@ -29,6 +29,22 @@
 -   配置 `LD_LIBRARY_PATH` 和 `LIBRARY_PATH` 到系统变量的 `Path`，`LD_LIBRARY_PATH/LIBRARY_PATH=%SFML%\bin`
 -   配置项目 `CMakeLists.txt` 查找SFML库
 
+3. 开发环境问题及定位解决
+
+- 2024-06-24
+    - 上述配置方法已经在一台Win11 i9 11900kb和一台Win11 i7 10700验证过，但是在我18年Mi Gaming Laptop Win11 i5 8300h上出现了问题，总是提示找不到动态链接库，目前问题已解决，但是根因尚不明确
+    - 解决方法:
+        - SFML官网给出的SFML-2.6.1 bin构建所使用的gcc版本为13.1.0，因此下载[对应版本的gcc](https://github.com/niXman/mingw-builds-binaries/releases/tag/13.1.0-rt_v11-rev1)即可解决
+    - 遗留问题:
+        - 为啥另外两台gcc版本为8.1.0运行是正常的
+        ```bash
+        ~ ❯ gcc --version
+        gcc.exe (x86_64-posix-seh-rev0, Built by MinGW-W64 project) 8.1.0
+        Copyright (C) 2018 Free Software Foundation, Inc.
+        This is free software; see the source for copying conditions.  There is NO
+        warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+        ```
+
 ```cmake
 set(LIB_SFML $ENV{SFML}/lib)
 set(SFML_DIR ${LIB_SFML}/cmake/SFML) # 要求该路径下包含 SFMLconfigure.cmake
