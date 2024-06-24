@@ -1,5 +1,4 @@
 #include <cstdlib>
-#include <iostream>
 #include "game_typdef.h"
 #include "entity_manager.h"
 
