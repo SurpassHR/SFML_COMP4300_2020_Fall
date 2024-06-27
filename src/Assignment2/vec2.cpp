@@ -1,4 +1,5 @@
 #include "vec2.h"
+#include <iostream>
 #include <cmath>
 
 bool Vec2::operator == (const Vec2 &rhs) const
@@ -16,9 +17,10 @@ Vec2 Vec2::operator + (const Vec2 &rhs) const
     return { x + rhs.x, y + rhs.y };
 }
 
-Vec2 Vec2::operator += (const Vec2 &rhs) const
+void Vec2::operator += (const Vec2 &rhs)
 {
-    return { x + rhs.x, y + rhs.y };
+    x += rhs.x;
+    y += rhs.y;
 }
 
 Vec2 Vec2::operator - (const Vec2 &rhs) const
@@ -26,9 +28,10 @@ Vec2 Vec2::operator - (const Vec2 &rhs) const
     return { x - rhs.x, y - rhs.y };
 }
 
-Vec2 Vec2::operator -= (const Vec2 &rhs) const
+void Vec2::operator -= (const Vec2 &rhs)
 {
-    return { x - rhs.x, y - rhs.y };
+    x -= rhs.x;
+    y -= rhs.y;
 }
 
 Vec2 Vec2::operator * (const double rhs) const
@@ -36,13 +39,48 @@ Vec2 Vec2::operator * (const double rhs) const
     return { x * rhs, y + rhs };
 }
 
+Vec2 Vec2::operator * (const Vec2 &rhs) const
+{
+    return { x * rhs.x, y * rhs.y };
+}
+
+void Vec2::operator *= (const double rhs)
+{
+    x *= rhs;
+    y *= rhs;
+}
+
+void Vec2::operator *= (const Vec2 &rhs)
+{
+    x *= rhs.x;
+    y *= rhs.y;
+}
+
 Vec2 Vec2::operator / (const double rhs) const
 {
+    if (rhs == 0) {
+        std::cerr << "divided by 0 err" << std::endl;
+        return *this;
+    }
     return { x / rhs, y / rhs };
+}
+
+void Vec2::operator /= (const double rhs)
+{
+    if (rhs == 0) {
+        std::cerr << "divided by 0 err" << std::endl;
+        return;
+    }
+    x /= rhs;
+    y /= rhs;
 }
 
 void Vec2::normalize()
 {
+    if (length() == 0) {
+        x = y = 0;
+        return;
+    }
     x /= length();
     y /= length();
 }

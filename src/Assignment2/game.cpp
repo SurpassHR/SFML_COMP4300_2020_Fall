@@ -5,10 +5,10 @@
 
 int Game::init()
 {
-    if (!loadConfig()) {
+    if (loadConfig() != 0) {
         return 1;
     }
-    if (!applyConfig()) {
+    if (applyConfig() != 0) {
         return 1;
     }
     return 0;
@@ -200,11 +200,12 @@ void Game::userInput()
             m_window->close();
         }
         if (event.type == sf::Event::EventType::KeyPressed) {
-            std::cout << "keyPressed: " << g_keycodeMap[event.key.code] << std::endl;
+            // std::cout << "keyPressed: " << g_keycodeMap[event.key.code] << std::endl;
             procKeyPressed(event.key.code);
         }
         if (event.type == sf::Event::EventType::KeyReleased) {
-            std::cout << "keyReleased: " << g_keycodeMap[event.key.code] << std::endl;
+            // std::cout << "keyReleased: " << g_keycodeMap[event.key.code] << std::endl;
+            procKeyReleased(event.key.code);
         }
         if (event.type == sf::Event::EventType::MouseButtonPressed) {
             std::cout << "mousePressed: " << g_mouseMap[event.mouseButton.button] << " [" << event.mouseButton.x << ", " << event.mouseButton.y << "]" << std::endl;
@@ -213,19 +214,6 @@ void Game::userInput()
             std::cout << "mouseReleased: " << g_mouseMap[event.mouseButton.button] << " [" << event.mouseButton.x << ", " << event.mouseButton.y << "]" << std::endl;
         }
     }
-}
-
-void Game::resetPlayerDirection()
-{
-    if (!m_player || !m_player->input) {
-        return;
-    }
-    m_player->input->up = false;
-    m_player->input->left = false;
-    m_player->input->right = false;
-    m_player->input->down = false;
-    m_player->input->shoot = false;
-    m_player->input->specialWeapon = false;
 }
 
 void Game::transform()
@@ -266,15 +254,21 @@ void Game::collision()
 
     float playerR = m_player->shape->shape().getRadius();
     sf::Vector2f playerP = m_player->shape->shape().getPosition();
-    if ((playerP.x + playerR >= wRight) ||
-        (playerP.x <= playerR + wLeft)) {
-        m_player->transform->velocity.x *= -1.0f;
+    if ((playerP.x + playerR > wRight) ||
+        (playerP.x < playerR + wLeft)) {
+        m_player->transform->velocity.x = 0.0f;
     }
-    if ((playerP.y + playerR >= wBottom) ||
-        (playerP.y <= playerR + wTop)) {
-        m_player->transform->velocity.y *= -1.0f;
+    if ((playerP.y + playerR > wBottom) ||
+        (playerP.y < playerR + wTop)) {
+        m_player->transform->velocity.y = 0.0f;
     }
 }
+
+// normalized direction vector
+const Vec2 UP_DIRECTION(0.0f, -1.0f);
+const Vec2 LEFT_DIRECTION(-1.0f, 0.0f);
+const Vec2 DOWN_DIRECTION(0.0f, 1.0f);
+const Vec2 RIGHT_DIRECTION(1.0f, 0.0f);
 
 void Game::procPlayerTransform()
 {
@@ -286,9 +280,16 @@ void Game::procPlayerTransform()
     // rotation transform
     m_player->shape->shape().rotate(m_player->transform->angle);
 
-    // move transform
-    // std::cout << m_player->shape->shape().getPosition().x << ", " << m_player->shape->shape().getPosition().y << ", " << m_player->transform->velocity.x << ", " << m_player->transform->velocity.y << std::endl;
-    m_player->shape->shape().setPosition(m_player->shape->shape().getPosition() + m_player->transform->velocity.vec2f());
+    // movement transform
+    Vec2 speed = m_player->transform->velocity;
+    Vec2 direction(0.0f, 0.0f);
+    direction += m_player->input->up ? UP_DIRECTION : Vec2(0.0f, 0.0f);
+    direction += m_player->input->left ? LEFT_DIRECTION : Vec2(0.0f, 0.0f);
+    direction += m_player->input->down ? DOWN_DIRECTION : Vec2(0.0f, 0.0f);
+    direction += m_player->input->right ? RIGHT_DIRECTION : Vec2(0.0f, 0.0f);
+    direction.normalize();
+    speed *= direction;
+    m_player->shape->shape().setPosition(m_player->shape->shape().getPosition() + speed.vec2f());
 }
 
 void Game::procEntityTransform()
@@ -299,7 +300,6 @@ void Game::procEntityTransform()
 void Game::procKeyPressed(sf::Keyboard::Key key)
 {
     using sfKey = sf::Keyboard::Key;
-    resetPlayerDirection();
     switch (key) {
         case sfKey::P:
             m_paused = !m_paused;
@@ -318,6 +318,27 @@ void Game::procKeyPressed(sf::Keyboard::Key key)
             break;
         case sfKey::D:
             m_player->input->right = true;
+            break;
+        default:
+            break;
+    }
+}
+
+void Game::procKeyReleased(sf::Keyboard::Key key)
+{
+    using sfKey = sf::Keyboard::Key;
+    switch (key) {
+        case sfKey::W:
+            m_player->input->up = false;
+            break;
+        case sfKey::A:
+            m_player->input->left = false;
+            break;
+        case sfKey::S:
+            m_player->input->down = false;
+            break;
+        case sfKey::D:
+            m_player->input->right = false;
             break;
         default:
             break;

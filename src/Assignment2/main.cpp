@@ -11,7 +11,7 @@ int main()
     std::filesystem::path currPath = std::filesystem::current_path();
     std::string fullPath = currPath.string() + GAME_PROJ_CFG_PATH;
     Game g(fullPath);
-    if (!g.init()) {
+    if (g.init() != 0) {
         return 1;
     }
     return g.run();

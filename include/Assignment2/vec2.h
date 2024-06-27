@@ -15,11 +15,15 @@ public:
     bool operator == (const Vec2 &rhs) const;
     bool operator != (const Vec2 &rhs) const;
     Vec2 operator + (const Vec2 &rhs) const;
-    Vec2 operator += (const Vec2 &rhs) const;
     Vec2 operator - (const Vec2 &rhs) const;
-    Vec2 operator -= (const Vec2 &rhs) const;
+    void operator += (const Vec2 &rhs);
+    void operator -= (const Vec2 &rhs);
     Vec2 operator * (const double rhs) const;
+    Vec2 operator * (const Vec2 &rhs) const;
+    void operator *= (const double rhs);
+    void operator *= (const Vec2 &rhs);
     Vec2 operator / (const double rhs) const;
+    void operator /= (const double rhs);
 public:
     void normalize();
     double length();

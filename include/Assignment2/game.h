@@ -108,7 +108,7 @@ private:
     int applyConfig();
 
     void procKeyPressed(sf::Keyboard::Key key);
-    void resetPlayerDirection();
+    void procKeyReleased(sf::Keyboard::Key key);
 
     void procPlayerTransform();
     void procEntityTransform();
