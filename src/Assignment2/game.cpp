@@ -23,6 +23,7 @@ int Game::run()
         update();
         if (!m_paused) {
             userInput();
+            transform();
         }
         m_window->display();
     }
@@ -188,7 +189,8 @@ std::map<int, std::string> g_keycodeMap = {
     {sf::Keyboard::Pause, "Pause"}
 };
 
-std::string g_mouseMap[2] = { "Left Button", "Right Button" };
+constexpr int MOUSE_BUTTON_NUM = 2;
+std::string g_mouseMap[MOUSE_BUTTON_NUM] = { "Left Button", "Right Button" };
 
 void Game::userInput()
 {
@@ -224,6 +226,27 @@ void Game::resetPlayerDirection()
     m_player->input->down = false;
     m_player->input->shoot = false;
     m_player->input->specialWeapon = false;
+}
+
+void Game::transform()
+{
+    procPlayerTransform();
+    procEntityTransform();
+}
+
+void Game::procPlayerTransform()
+{
+    if (m_player == nullptr) {
+        std::cerr << "player nullptr err" << std::endl;
+        return;
+    }
+    m_player->shape->shape().rotate(m_player->transform->angle);
+    std::cout << "player angle: " << m_player->shape->shape().getRotation() << "rotate: " << m_player->transform->angle << std::endl;
+}
+
+void Game::procEntityTransform()
+{
+
 }
 
 void Game::procKeyPressed(sf::Keyboard::Key key)

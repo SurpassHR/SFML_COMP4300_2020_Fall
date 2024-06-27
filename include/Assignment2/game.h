@@ -94,15 +94,22 @@ public:
     int init();
     int run();
 private:
+    // systems
+    void userInput();
+    void transform();
+
+    // assistant func
     void update();
+    void spawnPlayer();
+
     int loadConfig();
     int applyConfig();
 
-    void userInput();
-    void resetPlayerDirection();
     void procKeyPressed(sf::Keyboard::Key key);
+    void resetPlayerDirection();
 
-    void spawnPlayer();
+    void procPlayerTransform();
+    void procEntityTransform();
 private:
     std::shared_ptr<sf::RenderWindow> m_window;
     EntityManager m_entities;
