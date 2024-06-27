@@ -9,4 +9,4 @@ set_target_properties(${assignment2_target} PROPERTIES RUNTIME_OUTPUT_DIRECTORY 
 target_link_libraries(${assignment2_target} PRIVATE sfml-graphics sfml-audio)
 target_compile_features(${assignment2_target} PRIVATE cxx_std_17)
 
-add_subdirectory(Components)
+add_subdirectory(components)

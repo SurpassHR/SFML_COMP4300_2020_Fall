@@ -7,6 +7,8 @@ const std::string GAME_PROJ_CFG_PATH = "D:\\Codes\\Project\\external_git_repo\\C
 int main()
 {
     Game g(GAME_PROJ_CFG_PATH);
-    g.init();
-    return 0;
+    if (!g.init()) {
+        return 1;
+    }
+    return g.run();
 }

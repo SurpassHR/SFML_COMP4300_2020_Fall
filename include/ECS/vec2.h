@@ -6,7 +6,7 @@
 
 class Vec2 {
 public:
-    Vec2(int x, int y) : m_x(x), m_y(y) {}
+    Vec2(double x, double y) : m_x(x), m_y(y) {}
     virtual ~Vec2() {}
 public:
     float X() const { return m_x; }
@@ -32,11 +32,11 @@ public:
     {
         return { m_x - rhs.x, m_y - rhs.y };
     }
-    bool operator = (const Vec2 &rhs) const 
+    bool operator = (const Vec2 &rhs) const
     {
         return (m_x == rhs.X()) && (m_y == rhs.Y());
     }
-    bool operator = (const sf::Vector2f &rhs) const 
+    bool operator = (const sf::Vector2f &rhs) const
     {
         return (m_x == rhs.x) && (m_y == rhs.y);
     }
