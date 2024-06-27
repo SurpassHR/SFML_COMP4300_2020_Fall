@@ -65,7 +65,6 @@ int Game::loadConfig()
         m_bulletConfig.FG >> m_bulletConfig.FB >> m_bulletConfig.OR >> m_bulletConfig.OG >> m_bulletConfig.OB >>
         m_bulletConfig.OT >> m_bulletConfig.SV >> m_bulletConfig.L >> tail)) {
         std::cout << "parse " << head << ", " << tail << " config succ" << std::endl;
-        return 1;
     }
 
     return 0;

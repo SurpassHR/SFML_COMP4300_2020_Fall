@@ -50,6 +50,9 @@
         warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
         ```
 
+- 2024-06-27
+    - 还是由于gcc版本过低导致的问题: 使用c++17的标准库filesystem时报错，更新mingw gcc版本到13.1.0解决
+
 ```cmake
 set(LIB_SFML $ENV{SFML}/lib)
 set(SFML_DIR ${LIB_SFML}/cmake/SFML) # 要求该路径下包含 SFMLconfigure.cmake
