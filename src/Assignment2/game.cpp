@@ -215,7 +215,7 @@ void Game::userInput()
 
 void Game::resetPlayerDirection()
 {
-    if (!m_player) {
+    if (!m_player || !m_player->input) {
         return;
     }
     m_player->input->up = false;
@@ -256,24 +256,31 @@ void Game::procKeyPressed(sf::Keyboard::Key key)
 
 void Game::spawnPlayer()
 {
-    m_player = std::make_shared<Entity>("player", 1234);
+    auto e = std::make_shared<Entity>("player", 1234);
 
-    if (m_player->shape != nullptr) {
-        std::cerr << "create player shape not nullptr err" << std::endl;
+    if (e == nullptr) {
+        std::cerr << "create player nullptr err" << std::endl;
         return;
     }
-    m_player->shape = std::make_shared<Shape>(
+
+    e->shape = std::make_shared<Shape>(
         m_playerConfig.SR,
         m_playerConfig.SV,
         sf::Color(m_playerConfig.FR, m_playerConfig.FG, m_playerConfig.FB),
         sf::Color(m_playerConfig.OR, m_playerConfig.OG, m_playerConfig.OB),
         m_playerConfig.OT
     );
-    m_player->transform = std::make_shared<Transform>(
+
+    e->transform = std::make_shared<Transform>(
         Vec2(200.0f, 200.0f),
         Vec2(5.0f, 5.0f),
         1.0f
     );
+
+    e->input = std::make_shared<Input>();
+
+    m_player = e;
+
     m_window->draw(m_player->shape->shape());
 }
 
