@@ -7,3 +7,8 @@ Shape::Shape(float radius, float points, const sf::Color &fill, const sf::Color 
     circle.setOutlineColor(outline);
     circle.setOutlineThickness(thickness);
 }
+
+sf::CircleShape Shape::shape()
+{
+    return circle;
+}

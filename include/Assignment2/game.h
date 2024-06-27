@@ -90,18 +90,23 @@ public:
     Game(const std::string &configPath) : m_configPath(configPath) {}
     ~Game() = default;
 public:
-    void update();
     // read config from file
     int init();
     int run();
 private:
+    void update();
     int loadConfig();
     int applyConfig();
+
     void userInput();
+    void resetPlayerDirection();
+    void procKeyPressed(sf::Keyboard::Key key);
+
+    void spawnPlayer();
 private:
     std::shared_ptr<sf::RenderWindow> m_window;
     EntityManager m_entities;
-    Entity m_player;
+    std::shared_ptr<Entity> m_player;
     bool m_paused{ false };
     bool m_running{ true };
 

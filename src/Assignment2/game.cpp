@@ -1,6 +1,7 @@
 #include "game.h"
 #include <iostream>
 #include <fstream>
+#include <memory>
 
 int Game::init()
 {
@@ -19,6 +20,7 @@ int Game::run()
         return 1;
     }
     while (m_running) {
+        update();
         if (!m_paused) {
             userInput();
         }
@@ -197,6 +199,7 @@ void Game::userInput()
         }
         if (event.type == sf::Event::EventType::KeyPressed) {
             std::cout << "keyPressed: " << g_keycodeMap[event.key.code] << std::endl;
+            procKeyPressed(event.key.code);
         }
         if (event.type == sf::Event::EventType::KeyReleased) {
             std::cout << "keyReleased: " << g_keycodeMap[event.key.code] << std::endl;
@@ -210,7 +213,73 @@ void Game::userInput()
     }
 }
 
+void Game::resetPlayerDirection()
+{
+    if (!m_player) {
+        return;
+    }
+    m_player->input->up = false;
+    m_player->input->left = false;
+    m_player->input->right = false;
+    m_player->input->down = false;
+    m_player->input->shoot = false;
+    m_player->input->specialWeapon = false;
+}
+
+void Game::procKeyPressed(sf::Keyboard::Key key)
+{
+    using sfKey = sf::Keyboard::Key;
+    resetPlayerDirection();
+    switch (key) {
+        case sfKey::P:
+            m_paused = !m_paused;
+            break;
+        case sfKey::Q:
+            m_running = false;
+            break;
+        case sfKey::W:
+            m_player->input->up = true;
+            break;
+        case sfKey::A:
+            m_player->input->left = true;
+            break;
+        case sfKey::S:
+            m_player->input->down = true;
+            break;
+        case sfKey::D:
+            m_player->input->right = true;
+            break;
+        default:
+            break;
+    }
+}
+
+void Game::spawnPlayer()
+{
+    m_player = std::make_shared<Entity>("player", 1234);
+
+    if (m_player->shape != nullptr) {
+        std::cerr << "create player shape not nullptr err" << std::endl;
+        return;
+    }
+    m_player->shape = std::make_shared<Shape>(
+        m_playerConfig.SR,
+        m_playerConfig.SV,
+        sf::Color(m_playerConfig.FR, m_playerConfig.FG, m_playerConfig.FB),
+        sf::Color(m_playerConfig.OR, m_playerConfig.OG, m_playerConfig.OB),
+        m_playerConfig.OT
+    );
+    m_player->transform = std::make_shared<Transform>(
+        Vec2(200.0f, 200.0f),
+        Vec2(5.0f, 5.0f),
+        1.0f
+    );
+    m_window->draw(m_player->shape->shape());
+}
+
 void Game::update()
 {
-
+    if (!m_player) {
+        spawnPlayer();
+    }
 }

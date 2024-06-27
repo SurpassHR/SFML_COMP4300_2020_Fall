@@ -7,6 +7,8 @@ class Shape {
 public:
     Shape(float radius, float points, const sf::Color &fill, const sf::Color &outline, float thickness);
     ~Shape() = default;
+public:
+    sf::CircleShape shape();
 private:
     sf::CircleShape circle;
 };
