@@ -15,12 +15,15 @@ public:
     bool operator == (const Vec2 &rhs) const;
     bool operator != (const Vec2 &rhs) const;
     Vec2 operator + (const Vec2 &rhs) const;
+    Vec2 operator += (const Vec2 &rhs) const;
     Vec2 operator - (const Vec2 &rhs) const;
+    Vec2 operator -= (const Vec2 &rhs) const;
     Vec2 operator * (const double rhs) const;
     Vec2 operator / (const double rhs) const;
 public:
     void normalize();
     double length();
+    sf::Vector2f vec2f();
 };
 
 #endif // VEC2_H

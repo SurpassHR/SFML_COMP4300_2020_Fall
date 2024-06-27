@@ -16,7 +16,17 @@ Vec2 Vec2::operator + (const Vec2 &rhs) const
     return { x + rhs.x, y + rhs.y };
 }
 
+Vec2 Vec2::operator += (const Vec2 &rhs) const
+{
+    return { x + rhs.x, y + rhs.y };
+}
+
 Vec2 Vec2::operator - (const Vec2 &rhs) const
+{
+    return { x - rhs.x, y - rhs.y };
+}
+
+Vec2 Vec2::operator -= (const Vec2 &rhs) const
 {
     return { x - rhs.x, y - rhs.y };
 }
@@ -40,4 +50,8 @@ void Vec2::normalize()
 double Vec2::length()
 {
     return std::sqrt(std::pow(x, 2) + std::pow(y, 2));
+}
+sf::Vector2f Vec2::vec2f()
+{
+    return sf::Vector2f(x, y);
 }

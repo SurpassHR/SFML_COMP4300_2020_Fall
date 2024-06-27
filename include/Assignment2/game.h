@@ -97,6 +97,8 @@ private:
     // systems
     void userInput();
     void transform();
+    void render();
+    void collision();
 
     // assistant func
     void update();

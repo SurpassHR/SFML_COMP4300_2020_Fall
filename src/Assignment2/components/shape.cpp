@@ -6,10 +6,11 @@ Shape::Shape(float radius, float points, const sf::Color &fill, const sf::Color 
     circle.setFillColor(fill);
     circle.setOutlineColor(outline);
     circle.setOutlineThickness(thickness);
+    circle.setPosition(radius, radius);
     circle.setOrigin(radius, radius);
 }
 
-sf::CircleShape Shape::shape()
+sf::CircleShape &Shape::shape()
 {
     return circle;
 }

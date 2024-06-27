@@ -24,8 +24,9 @@ int Game::run()
         if (!m_paused) {
             userInput();
             transform();
+            collision();
         }
-        m_window->display();
+        render();
     }
     return 0;
 }
@@ -234,14 +235,61 @@ void Game::transform()
     procEntityTransform();
 }
 
+void Game::render()
+{
+    m_window->clear();
+
+    // render player
+    m_window->draw(m_player->shape->shape());
+
+    // render enemies
+    auto enemies = m_entities.getEntities("enemy");
+    for (auto enemy = enemies.begin(); enemy < enemies.end(); ++enemy) {
+        m_window->draw((*enemy)->shape->shape());
+    }
+
+    // render bullets
+    auto bullets = m_entities.getEntities("bullets");
+    for (auto bullet = bullets.begin(); bullet < bullets.end(); ++bullet) {
+        m_window->draw((*bullet)->shape->shape());
+    }
+
+    m_window->display();
+}
+
+void Game::collision()
+{
+    // proc player collision with window
+    int wTop = 0;
+    int wLeft = 0;
+    int wBottom = m_window->getSize().y;
+    int wRight = m_window->getSize().x;
+
+    float playerR = m_player->shape->shape().getRadius();
+    sf::Vector2f playerP = m_player->shape->shape().getPosition();
+    if ((playerP.x + playerR >= wRight) ||
+        (playerP.x <= playerR + wLeft)) {
+        m_player->transform->velocity.x *= -1.0f;
+    }
+    if ((playerP.y + playerR >= wBottom) ||
+        (playerP.y <= playerR + wTop)) {
+        m_player->transform->velocity.y *= -1.0f;
+    }
+}
+
 void Game::procPlayerTransform()
 {
     if (m_player == nullptr) {
         std::cerr << "player nullptr err" << std::endl;
         return;
     }
+
+    // rotation transform
     m_player->shape->shape().rotate(m_player->transform->angle);
-    std::cout << "player angle: " << m_player->shape->shape().getRotation() << "rotate: " << m_player->transform->angle << std::endl;
+
+    // move transform
+    // std::cout << m_player->shape->shape().getPosition().x << ", " << m_player->shape->shape().getPosition().y << ", " << m_player->transform->velocity.x << ", " << m_player->transform->velocity.y << std::endl;
+    m_player->shape->shape().setPosition(m_player->shape->shape().getPosition() + m_player->transform->velocity.vec2f());
 }
 
 void Game::procEntityTransform()
@@ -303,8 +351,6 @@ void Game::spawnPlayer()
     e->input = std::make_shared<Input>();
 
     m_player = e;
-
-    m_window->draw(m_player->shape->shape());
 }
 
 void Game::update()

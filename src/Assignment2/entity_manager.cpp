@@ -25,7 +25,7 @@ void EntityManager::update()
 std::shared_ptr<Entity> EntityManager::addEntity(const std::string &tag)
 {
     std::shared_ptr<Entity> e = std::make_shared<Entity>(tag, m_entityNum++);
-    if (!e) {
+    if (e == nullptr) {
         return nullptr;
     }
     e->m_active = true;
