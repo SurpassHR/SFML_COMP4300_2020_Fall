@@ -228,6 +228,7 @@ void Game::render()
 
     // render player
     m_window->draw(m_player->shape->shape());
+    m_player->shape->shape().setPosition(m_player->shape->shape().getPosition() + m_player->transform->currVelocity.vec2f());
 
     // render enemies
     auto enemies = m_entities.getEntities("enemy");
@@ -254,13 +255,21 @@ void Game::collision()
 
     float playerR = m_player->shape->shape().getRadius();
     sf::Vector2f playerP = m_player->shape->shape().getPosition();
-    if ((playerP.x + playerR > wRight) ||
-        (playerP.x < playerR + wLeft)) {
-        m_player->transform->velocity.x = 0.0f;
+    Vec2 &currV = m_player->transform->currVelocity;
+
+    Vec2(playerP).print("playerP");
+
+    bool rCollision = playerP.x + playerR + currV.x > wRight;
+    bool lCollision = playerP.x - playerR + currV.x < wLeft;
+    bool bCollision = playerP.y + playerR + currV.y > wBottom;
+    bool tCollision = playerP.y - playerR + currV.y < wTop;
+
+    // printf("[%u %u %u %u]\n", rCollision, lCollision, bCollision, tCollision);
+    if (rCollision || lCollision) {
+        currV.x = 0.0f;
     }
-    if ((playerP.y + playerR > wBottom) ||
-        (playerP.y < playerR + wTop)) {
-        m_player->transform->velocity.y = 0.0f;
+    if (bCollision || tCollision) {
+        currV.y = 0.0f;
     }
 }
 
@@ -288,8 +297,11 @@ void Game::procPlayerTransform()
     direction += m_player->input->down ? DOWN_DIRECTION : Vec2(0.0f, 0.0f);
     direction += m_player->input->right ? RIGHT_DIRECTION : Vec2(0.0f, 0.0f);
     direction.normalize();
+    // direction.print("direction");
     speed *= direction;
-    m_player->shape->shape().setPosition(m_player->shape->shape().getPosition() + speed.vec2f());
+    // speed.print("speed");
+
+    m_player->transform->currVelocity = speed;
 }
 
 void Game::procEntityTransform()

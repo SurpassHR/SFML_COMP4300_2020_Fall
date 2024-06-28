@@ -93,3 +93,8 @@ sf::Vector2f Vec2::vec2f()
 {
     return sf::Vector2f(x, y);
 }
+
+void Vec2::print(const std::string &name)
+{
+    std::cout << name << "[" << x << ", " << y << "]" << std::endl;
+}

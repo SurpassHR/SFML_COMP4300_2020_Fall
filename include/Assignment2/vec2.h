@@ -28,6 +28,7 @@ public:
     void normalize();
     double length();
     sf::Vector2f vec2f();
+    void print(const std::string &name);
 };
 
 #endif // VEC2_H
