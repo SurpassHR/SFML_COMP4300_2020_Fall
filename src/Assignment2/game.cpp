@@ -21,8 +21,8 @@ int Game::run()
     }
     while (m_running) {
         update();
+        userInput();
         if (!m_paused) {
-            userInput();
             transform();
             collision();
         }
