@@ -101,10 +101,11 @@ private:
     void userInput();
     void movement();
     void collision();
+    void update();
     void render();
 
     // assistant func
-    void update();
+    void spawner();
     void playerSpawner();
     void enemySpawner();
 

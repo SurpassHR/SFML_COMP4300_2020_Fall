@@ -2,7 +2,6 @@
 #include <iostream>
 #include <fstream>
 #include <memory>
-#include <random>
 #include <ctime>
 
 int Game::init()
@@ -23,6 +22,7 @@ int Game::run()
         return 1;
     }
     while (m_running) {
+        spawner();
         update();
         userInput();
         if (!m_paused) {
@@ -231,15 +231,11 @@ void Game::render()
     m_window->clear();
 
     // render player
-    m_player->shape->shape().setPosition(m_player->shape->shape().getPosition() + m_player->transform->currVelocity.vec2f());
     m_window->draw(m_player->shape->shape());
 
     // render enemies
     auto enemies = m_entities.getEntities("enemy");
     for (auto e = enemies.begin(); e < enemies.end(); ++e) {
-        Vec2 pos((*e)->shape->shape().getPosition() + (*e)->transform->currVelocity.vec2f());
-        (*e)->transform->pos = pos;
-        (*e)->shape->shape().setPosition((*e)->transform->pos.vec2f());
         m_window->draw((*e)->shape->shape());
     }
 
@@ -273,10 +269,6 @@ void Game::procPlayerMovement()
         return;
     }
 
-    // rotation transform
-    m_player->shape->shape().rotate(m_player->transform->angle);
-
-    // movement transform
     Vec2 speed = m_player->transform->velocity;
     Vec2 direction(0.0f, 0.0f);
     direction += m_player->input->up ? UP_DIRECTION : Vec2(0.0f, 0.0f);
@@ -291,10 +283,6 @@ void Game::procPlayerMovement()
 
 void Game::procEntityMovement()
 {
-    auto enemies = m_entities.getEntities("enemy");
-    for (auto e = enemies.begin(); e < enemies.end(); ++e) {
-        (*e)->shape->shape().rotate((*e)->transform->angle);
-    }
 }
 
 void Game::procBoundaryPlayerCollision()
@@ -464,7 +452,19 @@ void Game::enemySpawner()
 
 void Game::update()
 {
-    if (!m_player) {
+    m_entities.update();
+
+    m_player->update();
+
+    auto entities = m_entities.getEntities();
+    for (auto e = entities.begin(); e < entities.end(); ++e) {
+        (*e)->update();
+    }
+}
+
+void Game::spawner()
+{
+    if (m_player == nullptr) {
         playerSpawner();
     }
     if (m_currentFrame % 600 == 0) {

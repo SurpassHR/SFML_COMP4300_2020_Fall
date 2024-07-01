@@ -14,6 +14,9 @@ class Entity {
 public:
     Entity(const std::string tag, int id) : m_tag(tag), m_id(id) {}
     ~Entity() = default;
+public:
+    // refresh entity position, shape, rotate angle, etc
+    void update();
 // components
 public:
     std::shared_ptr<Transform> transform;
