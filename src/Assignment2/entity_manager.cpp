@@ -18,6 +18,7 @@ void EntityManager::update()
             activeEntities.push_back(*iter);
         }
     }
+    m_toAdd.clear();
     m_entities.clear();
     m_entities = activeEntities;
 }

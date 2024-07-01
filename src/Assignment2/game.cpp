@@ -23,8 +23,8 @@ int Game::run()
     }
     while (m_running) {
         spawner();
-        update();
         userInput();
+        update();
         if (!m_paused) {
             movement();
             collision();
@@ -247,6 +247,7 @@ void Game::render()
 
     m_window->display();
     m_currentFrame++;
+    std::cout << "currFrame: " << m_currentFrame << std::endl;
 }
 
 void Game::collision()
