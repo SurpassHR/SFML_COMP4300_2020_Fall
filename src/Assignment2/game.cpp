@@ -23,7 +23,7 @@ int Game::run()
         update();
         userInput();
         if (!m_paused) {
-            transform();
+            movement();
             collision();
         }
         render();
@@ -208,18 +208,18 @@ void Game::userInput()
             procKeyReleased(event.key.code);
         }
         if (event.type == sf::Event::EventType::MouseButtonPressed) {
-            std::cout << "mousePressed: " << g_mouseMap[event.mouseButton.button] << " [" << event.mouseButton.x << ", " << event.mouseButton.y << "]" << std::endl;
+            // std::cout << "mousePressed: " << g_mouseMap[event.mouseButton.button] << " [" << event.mouseButton.x << ", " << event.mouseButton.y << "]" << std::endl;
         }
         if (event.type == sf::Event::EventType::MouseButtonReleased) {
-            std::cout << "mouseReleased: " << g_mouseMap[event.mouseButton.button] << " [" << event.mouseButton.x << ", " << event.mouseButton.y << "]" << std::endl;
+            // std::cout << "mouseReleased: " << g_mouseMap[event.mouseButton.button] << " [" << event.mouseButton.x << ", " << event.mouseButton.y << "]" << std::endl;
         }
     }
 }
 
-void Game::transform()
+void Game::movement()
 {
-    procPlayerTransform();
-    procEntityTransform();
+    procPlayerMovement();
+    procEntityMovement();
 }
 
 void Game::render()
@@ -227,8 +227,8 @@ void Game::render()
     m_window->clear();
 
     // render player
-    m_window->draw(m_player->shape->shape());
     m_player->shape->shape().setPosition(m_player->shape->shape().getPosition() + m_player->transform->currVelocity.vec2f());
+    m_window->draw(m_player->shape->shape());
 
     // render enemies
     auto enemies = m_entities.getEntities("enemy");
@@ -247,30 +247,8 @@ void Game::render()
 
 void Game::collision()
 {
-    // proc player collision with window
-    int wTop = 0;
-    int wLeft = 0;
-    int wBottom = m_window->getSize().y;
-    int wRight = m_window->getSize().x;
-
-    float playerR = m_player->shape->shape().getRadius();
-    sf::Vector2f playerP = m_player->shape->shape().getPosition();
-    Vec2 &currV = m_player->transform->currVelocity;
-
-    Vec2(playerP).print("playerP");
-
-    bool rCollision = playerP.x + playerR + currV.x > wRight;
-    bool lCollision = playerP.x - playerR + currV.x < wLeft;
-    bool bCollision = playerP.y + playerR + currV.y > wBottom;
-    bool tCollision = playerP.y - playerR + currV.y < wTop;
-
-    // printf("[%u %u %u %u]\n", rCollision, lCollision, bCollision, tCollision);
-    if (rCollision || lCollision) {
-        currV.x = 0.0f;
-    }
-    if (bCollision || tCollision) {
-        currV.y = 0.0f;
-    }
+    // proc player collision with window boundary
+    procBoundaryPlayerCollision();
 }
 
 // normalized direction vector
@@ -279,7 +257,7 @@ const Vec2 LEFT_DIRECTION(-1.0f, 0.0f);
 const Vec2 DOWN_DIRECTION(0.0f, 1.0f);
 const Vec2 RIGHT_DIRECTION(1.0f, 0.0f);
 
-void Game::procPlayerTransform()
+void Game::procPlayerMovement()
 {
     if (m_player == nullptr) {
         std::cerr << "player nullptr err" << std::endl;
@@ -297,16 +275,38 @@ void Game::procPlayerTransform()
     direction += m_player->input->down ? DOWN_DIRECTION : Vec2(0.0f, 0.0f);
     direction += m_player->input->right ? RIGHT_DIRECTION : Vec2(0.0f, 0.0f);
     direction.normalize();
-    // direction.print("direction");
     speed *= direction;
-    // speed.print("speed");
 
     m_player->transform->currVelocity = speed;
 }
 
-void Game::procEntityTransform()
+void Game::procEntityMovement()
 {
 
+}
+
+void Game::procBoundaryPlayerCollision()
+{
+    int wTop = 0;
+    int wLeft = 0;
+    int wBottom = m_window->getSize().y;
+    int wRight = m_window->getSize().x;
+
+    float playerR = m_player->shape->shape().getRadius();
+    sf::Vector2f playerP = m_player->shape->shape().getPosition();
+    Vec2 &currV = m_player->transform->currVelocity;
+
+    bool rCollision = playerP.x + playerR + currV.x > wRight;
+    bool lCollision = playerP.x - playerR + currV.x < wLeft;
+    bool bCollision = playerP.y + playerR + currV.y > wBottom;
+    bool tCollision = playerP.y - playerR + currV.y < wTop;
+
+    if (rCollision || lCollision) {
+        currV.x = 0.0f;
+    }
+    if (bCollision || tCollision) {
+        currV.y = 0.0f;
+    }
 }
 
 void Game::procKeyPressed(sf::Keyboard::Key key)

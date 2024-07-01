@@ -96,9 +96,9 @@ public:
 private:
     // systems
     void userInput();
-    void transform();
-    void render();
+    void movement();
     void collision();
+    void render();
 
     // assistant func
     void update();
@@ -110,8 +110,10 @@ private:
     void procKeyPressed(sf::Keyboard::Key key);
     void procKeyReleased(sf::Keyboard::Key key);
 
-    void procPlayerTransform();
-    void procEntityTransform();
+    void procPlayerMovement();
+    void procEntityMovement();
+
+    void procBoundaryPlayerCollision();
 private:
     std::shared_ptr<sf::RenderWindow> m_window;
     EntityManager m_entities;
