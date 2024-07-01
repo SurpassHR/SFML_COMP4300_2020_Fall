@@ -39,6 +39,9 @@ struct EnemyConfig {
     int
         SR,   // Shape Radius
         CR,   // Collision Radius
+        FR, // Fillcolor Red
+        FG, // Fillcolor Green
+        FB, // Fillcolor Blue
         OR,   // Outlinecolor Red
         OG,   // Outlinecolor Green
         OB,   // Outlinecolor Blue
@@ -102,7 +105,8 @@ private:
 
     // assistant func
     void update();
-    void spawnPlayer();
+    void playerSpawner();
+    void enemySpawner();
 
     int loadConfig();
     int applyConfig();
@@ -114,12 +118,14 @@ private:
     void procEntityMovement();
 
     void procBoundaryPlayerCollision();
+    void procBoundaryEnemyCollision();
 private:
     std::shared_ptr<sf::RenderWindow> m_window;
     EntityManager m_entities;
     std::shared_ptr<Entity> m_player;
     bool m_paused{ false };
     bool m_running{ true };
+    long long m_currentFrame{ 0 };
 
     const std::string &m_configPath;
 

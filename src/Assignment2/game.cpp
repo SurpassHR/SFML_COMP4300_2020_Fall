@@ -2,6 +2,8 @@
 #include <iostream>
 #include <fstream>
 #include <memory>
+#include <random>
+#include <ctime>
 
 int Game::init()
 {
@@ -11,6 +13,7 @@ int Game::init()
     if (applyConfig() != 0) {
         return 1;
     }
+    std::srand(static_cast<unsigned int>(std::time(nullptr)));
     return 0;
 }
 
@@ -56,9 +59,10 @@ int Game::loadConfig()
         m_playerConfig.OT >> m_playerConfig.SV >> tail)) {
         std::cout << "parse " << head << ", " << tail << " config succ" << std::endl;
     }
-    if ((fin >> head >> m_enemyConfig.SR >> m_enemyConfig.CR >> m_enemyConfig.SMIN >> m_enemyConfig.SMAX >>
-        m_enemyConfig.OR >> m_enemyConfig.OG >> m_enemyConfig.OB >> m_enemyConfig.OT >> m_enemyConfig.VMIN >>
-        m_enemyConfig.VMAX >> m_enemyConfig.L >> m_enemyConfig.SI >> tail)) {
+    if ((fin >> head >> m_enemyConfig.SR >> m_enemyConfig.CR >> m_enemyConfig.FR >> m_enemyConfig.FG >>
+        m_enemyConfig.FB >> m_enemyConfig.SMIN >> m_enemyConfig.SMAX >> m_enemyConfig.OR >> m_enemyConfig.OG >>
+        m_enemyConfig.OB >> m_enemyConfig.OT >> m_enemyConfig.VMIN >> m_enemyConfig.VMAX >> m_enemyConfig.L >>
+        m_enemyConfig.SI >> tail)) {
         std::cout << "parse " << head << ", " << tail << " config succ" << std::endl;
     }
     if ((fin >> head >> m_bulletConfig.SR >> m_bulletConfig.CR >> m_bulletConfig.S >> m_bulletConfig.FR >>
@@ -232,8 +236,11 @@ void Game::render()
 
     // render enemies
     auto enemies = m_entities.getEntities("enemy");
-    for (auto enemy = enemies.begin(); enemy < enemies.end(); ++enemy) {
-        m_window->draw((*enemy)->shape->shape());
+    for (auto e = enemies.begin(); e < enemies.end(); ++e) {
+        Vec2 pos((*e)->shape->shape().getPosition() + (*e)->transform->currVelocity.vec2f());
+        (*e)->transform->pos = pos;
+        (*e)->shape->shape().setPosition((*e)->transform->pos.vec2f());
+        m_window->draw((*e)->shape->shape());
     }
 
     // render bullets
@@ -243,12 +250,14 @@ void Game::render()
     }
 
     m_window->display();
+    m_currentFrame++;
 }
 
 void Game::collision()
 {
     // proc player collision with window boundary
     procBoundaryPlayerCollision();
+    procBoundaryEnemyCollision();
 }
 
 // normalized direction vector
@@ -282,7 +291,10 @@ void Game::procPlayerMovement()
 
 void Game::procEntityMovement()
 {
-
+    auto enemies = m_entities.getEntities("enemy");
+    for (auto e = enemies.begin(); e < enemies.end(); ++e) {
+        (*e)->shape->shape().rotate((*e)->transform->angle);
+    }
 }
 
 void Game::procBoundaryPlayerCollision()
@@ -306,6 +318,33 @@ void Game::procBoundaryPlayerCollision()
     }
     if (bCollision || tCollision) {
         currV.y = 0.0f;
+    }
+}
+
+void Game::procBoundaryEnemyCollision()
+{
+    int wTop = 0;
+    int wLeft = 0;
+    int wBottom = m_window->getSize().y;
+    int wRight = m_window->getSize().x;
+
+    auto enemies = m_entities.getEntities("enemy");
+    for (auto e = enemies.begin(); e < enemies.end(); ++e) {
+        float eR = (*e)->shape->shape().getRadius();
+        sf::Vector2f eP = (*e)->shape->shape().getPosition();
+        Vec2 &currV = (*e)->transform->currVelocity;
+
+        bool rCollision = eP.x + eR + currV.x > wRight;
+        bool lCollision = eP.x - eR + currV.x < wLeft;
+        bool bCollision = eP.y + eR + currV.y > wBottom;
+        bool tCollision = eP.y - eR + currV.y < wTop;
+
+        if (rCollision || lCollision) {
+            currV.x *= -1.0f;
+        }
+        if (bCollision || tCollision) {
+            currV.y *= -1.0f;
+        }
     }
 }
 
@@ -357,7 +396,7 @@ void Game::procKeyReleased(sf::Keyboard::Key key)
     }
 }
 
-void Game::spawnPlayer()
+void Game::playerSpawner()
 {
     auto e = std::make_shared<Entity>("player", 1234);
 
@@ -366,6 +405,12 @@ void Game::spawnPlayer()
         return;
     }
 
+    e->transform = std::make_shared<Transform>(
+        Vec2(200.0f, 200.0f),
+        Vec2(5.0f, 5.0f),
+        1.0f
+    );
+
     e->shape = std::make_shared<Shape>(
         m_playerConfig.SR,
         m_playerConfig.SV,
@@ -373,21 +418,56 @@ void Game::spawnPlayer()
         sf::Color(m_playerConfig.OR, m_playerConfig.OG, m_playerConfig.OB),
         m_playerConfig.OT
     );
-
-    e->transform = std::make_shared<Transform>(
-        Vec2(200.0f, 200.0f),
-        Vec2(5.0f, 5.0f),
-        1.0f
-    );
+    e->shape->shape().setPosition(e->transform->pos.vec2f());
 
     e->input = std::make_shared<Input>();
 
     m_player = e;
 }
 
+void Game::enemySpawner()
+{
+    int wWidth = m_windowConfig.WW;
+    int wHeight = m_windowConfig.WH;
+    int origin = 0;
+
+    auto e = m_entities.addEntity("enemy");
+    if (e == nullptr) {
+        return;
+    }
+    // generate number in range [0, wWidth] and [0, hWidth]
+    int randX = origin + (std::rand() % (wWidth + 1));
+    int randY = origin + (std::rand() % (wHeight + 1));
+    Vec2 ePos(randX, randY);
+
+    int minSpeed = m_enemyConfig.SMIN;
+    int speedDiff = m_enemyConfig.SMAX - minSpeed;
+    int speedX = minSpeed + (std::rand() % (speedDiff+ 1));
+    int speedY = minSpeed + (std::rand() % (speedDiff+ 1));
+    Vec2 eSpeed(speedX, speedY);
+
+    e->transform = std::make_shared<Transform>(
+        ePos,
+        eSpeed,
+        1.0f
+    );
+    e->transform->currVelocity = e->transform->velocity;
+    e->shape = std::make_shared<Shape>(
+        m_enemyConfig.SR,
+        m_enemyConfig.VMAX,
+        sf::Color(m_enemyConfig.FR, m_enemyConfig.FG, m_enemyConfig.FB),
+        sf::Color(m_enemyConfig.OR, m_enemyConfig.OG, m_enemyConfig.OB),
+        m_enemyConfig.OT
+    );
+    e->shape->shape().setPosition(e->transform->pos.vec2f());
+}
+
 void Game::update()
 {
     if (!m_player) {
-        spawnPlayer();
+        playerSpawner();
+    }
+    if (m_currentFrame % 600 == 0) {
+        enemySpawner();
     }
 }
