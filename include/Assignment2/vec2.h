@@ -29,6 +29,8 @@ public:
     double length();
     sf::Vector2f vec2f();
     void print(const std::string &name);
+    double dist(const Vec2 &rhs);
+    double dist2(const Vec2 &rhs);
 };
 
 #endif // VEC2_H

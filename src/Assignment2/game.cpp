@@ -3,6 +3,7 @@
 #include <fstream>
 #include <memory>
 #include <ctime>
+#include <cmath>
 
 int Game::init()
 {
@@ -254,6 +255,7 @@ void Game::collision()
     // proc player collision with window boundary
     procBoundaryPlayerCollision();
     procBoundaryEnemyCollision();
+    procEnemiesCollision();
 }
 
 // normalized direction vector
@@ -332,6 +334,34 @@ void Game::procBoundaryEnemyCollision()
         }
         if (bCollision || tCollision) {
             currV.y *= -1.0f;
+        }
+    }
+}
+
+void Game::procEnemiesCollision()
+{
+    auto enemies = m_entities.getEntities("enemy");
+    for (int i = 0; i < enemies.size(); ++i) {
+        for (int j = 0; j < enemies.size(); ++j) {
+            if (i == j) {
+                continue;
+            }
+            auto e1 = enemies[i];
+            auto e2 = enemies[j];
+            e1->transform->pos.print("e1");
+            e2->transform->pos.print("e2");
+            double dist2 = e1->transform->pos.dist2(e2->transform->pos);
+            Vec2 e1RelaDire = (e2->transform->pos - e1->transform->pos);
+            e1RelaDire.normalize();
+            Vec2 e2RelaDire = (e1->transform->pos - e2->transform->pos);
+            e2RelaDire.normalize();
+
+            Vec2 e1RelaSpeed = e1->transform->currVelocity * e1RelaDire;
+            Vec2 e2RelaSpeed = e2->transform->currVelocity * e2RelaDire;
+
+            if (dist2 <= std::pow(e1->shape->shape().getRadius(), 2) + std::pow(e2->shape->shape().getRadius(), 2) - e1RelaSpeed.length() - e2RelaSpeed.length()) {
+                e1->transform->currVelocity *= -1.0f;
+            }
         }
     }
 }

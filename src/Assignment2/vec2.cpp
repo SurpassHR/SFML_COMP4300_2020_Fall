@@ -98,3 +98,14 @@ void Vec2::print(const std::string &name)
 {
     std::cout << name << "[" << x << ", " << y << "]" << std::endl;
 }
+
+double Vec2::dist(const Vec2 &rhs)
+{
+    return std::sqrt(std::pow(rhs.x - x, 2) + std::pow(rhs.y - y, 2));
+}
+
+
+double Vec2::dist2(const Vec2 &rhs)
+{
+    return std::pow(rhs.x - x, 2) + std::pow(rhs.y - y, 2);
+}
