@@ -85,10 +85,24 @@ void Vec2::normalize()
     y /= length();
 }
 
+Vec2 Vec2::normalized()
+{
+    if (length() == 0) {
+        x = y = 0;
+        return { 0.0f, 0.0f };
+    }
+    return { x / length(), y / length() };
+}
+
 double Vec2::length()
 {
-    return std::sqrt(std::pow(x, 2) + std::pow(y, 2));
+    return std::sqrt(x * x + y * y);
 }
+double Vec2::length2()
+{
+    return x * x + y * y;
+}
+
 sf::Vector2f Vec2::vec2f()
 {
     return sf::Vector2f(x, y);
@@ -108,4 +122,9 @@ double Vec2::dist(const Vec2 &rhs)
 double Vec2::dist2(const Vec2 &rhs)
 {
     return std::pow(rhs.x - x, 2) + std::pow(rhs.y - y, 2);
+}
+
+double Vec2::dot(const Vec2 &rhs)
+{
+    return x * rhs.x + y * rhs.y;
 }

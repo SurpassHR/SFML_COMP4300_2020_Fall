@@ -213,6 +213,7 @@ void Game::userInput()
             procKeyReleased(event.key.code);
         }
         if (event.type == sf::Event::EventType::MouseButtonPressed) {
+            enemySpawner();
             // std::cout << "mousePressed: " << g_mouseMap[event.mouseButton.button] << " [" << event.mouseButton.x << ", " << event.mouseButton.y << "]" << std::endl;
         }
         if (event.type == sf::Event::EventType::MouseButtonReleased) {
@@ -342,25 +343,40 @@ void Game::procEnemiesCollision()
 {
     auto enemies = m_entities.getEntities("enemy");
     for (int i = 0; i < enemies.size(); ++i) {
-        for (int j = 0; j < enemies.size(); ++j) {
-            if (i == j) {
-                continue;
-            }
+        for (int j = i + 1; j < enemies.size(); ++j) {
             auto e1 = enemies[i];
             auto e2 = enemies[j];
-            e1->transform->pos.print("e1");
-            e2->transform->pos.print("e2");
-            double dist2 = e1->transform->pos.dist2(e2->transform->pos);
-            Vec2 e1RelaDire = (e2->transform->pos - e1->transform->pos);
-            e1RelaDire.normalize();
-            Vec2 e2RelaDire = (e1->transform->pos - e2->transform->pos);
-            e2RelaDire.normalize();
 
-            Vec2 e1RelaSpeed = e1->transform->currVelocity * e1RelaDire;
-            Vec2 e2RelaSpeed = e2->transform->currVelocity * e2RelaDire;
+            Vec2 relativePos = e2->transform->pos - e1->transform->pos;
+            double dist2 = relativePos.length2();
+            double radiusSum = e1->shape->shape().getRadius() + e2->shape->shape().getRadius();
 
-            if (dist2 <= std::pow(e1->shape->shape().getRadius(), 2) + std::pow(e2->shape->shape().getRadius(), 2) - e1RelaSpeed.length() - e2RelaSpeed.length()) {
-                e1->transform->currVelocity *= -1.0f;
+            if (dist2 <= radiusSum * radiusSum) {
+                // collision happens
+                Vec2 normal = relativePos.normalized();
+                Vec2 relativeVelocity = e2->transform->currVelocity - e1->transform->currVelocity;
+
+                double velocityAlongNormal = relativeVelocity.dot(normal);
+
+                // object detaching
+                if (velocityAlongNormal > 0)
+                    continue;
+
+                // elastic coeff (perfectly)
+                double restitution = 1.0f;
+
+                double impulseMagnitude = -(1 + restitution) * velocityAlongNormal;
+                impulseMagnitude /= 2;
+
+                Vec2 impulse = normal * impulseMagnitude;
+                e1->transform->currVelocity -= impulse / 2;
+                e2->transform->currVelocity += impulse / 2;
+
+                // process overlap
+                double overlap = radiusSum - std::sqrt(dist2);
+                Vec2 separation = normal * overlap * 0.5;
+                e1->transform->pos -= separation;
+                e2->transform->pos += separation;
             }
         }
     }
@@ -520,6 +536,9 @@ void Game::spawner()
         playerSpawner();
     }
     if (m_currentFrame % 600 == 0) {
+        if (m_entities.getEntities("enemy").size() >= 2) {
+            return;
+        }
         enemySpawner();
     }
 }

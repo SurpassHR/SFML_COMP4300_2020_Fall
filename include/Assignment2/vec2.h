@@ -26,11 +26,14 @@ public:
     void operator /= (const double rhs);
 public:
     void normalize();
+    Vec2 normalized();
     double length();
+    double length2();
     sf::Vector2f vec2f();
     void print(const std::string &name);
     double dist(const Vec2 &rhs);
     double dist2(const Vec2 &rhs);
+    double dot(const Vec2 &rhs);
 };
 
 #endif // VEC2_H
