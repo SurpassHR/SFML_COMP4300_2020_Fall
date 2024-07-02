@@ -24,8 +24,8 @@ int Game::run()
     while (m_running) {
         spawner();
         userInput();
-        update();
         if (!m_paused) {
+            update();
             movement();
             collision();
         }
@@ -247,7 +247,6 @@ void Game::render()
 
     m_window->display();
     m_currentFrame++;
-    std::cout << "currFrame: " << m_currentFrame << std::endl;
 }
 
 void Game::collision()
@@ -416,24 +415,30 @@ void Game::playerSpawner()
 
 void Game::enemySpawner()
 {
-    int wWidth = m_windowConfig.WW;
-    int wHeight = m_windowConfig.WH;
-    int origin = 0;
+    // avoid spawning enemy on the border
+    int wWidth = m_windowConfig.WW - m_enemyConfig.SR;
+    int wHeight = m_windowConfig.WH - m_enemyConfig.SR;
+    int origin = 0.0f + m_enemyConfig.SR;
 
     auto e = m_entities.addEntity("enemy");
     if (e == nullptr) {
         return;
     }
-    // generate number in range [0, wWidth] and [0, hWidth]
-    int randX = origin + (std::rand() % (wWidth + 1));
-    int randY = origin + (std::rand() % (wHeight + 1));
+    // generate number in range [origin, wWidth] and [origin, hWidth]
+    int randX = origin + (std::rand() % (wWidth - origin + 1));
+    int randY = origin + (std::rand() % (wHeight - origin + 1));
     Vec2 ePos(randX, randY);
 
     int minSpeed = m_enemyConfig.SMIN;
     int speedDiff = m_enemyConfig.SMAX - minSpeed;
-    int speedX = minSpeed + (std::rand() % (speedDiff+ 1));
-    int speedY = minSpeed + (std::rand() % (speedDiff+ 1));
+    int speedX = minSpeed + (std::rand() % (speedDiff + 1));
+    int speedY = minSpeed + (std::rand() % (speedDiff + 1));
     Vec2 eSpeed(speedX, speedY);
+
+    int minVert = m_enemyConfig.VMIN;
+    int maxVert = m_enemyConfig.VMAX;
+    int vertDiff = maxVert - minVert;
+    int randVert = minVert + (std::rand() % (vertDiff + 1));
 
     e->transform = std::make_shared<Transform>(
         ePos,
@@ -443,12 +448,28 @@ void Game::enemySpawner()
     e->transform->currVelocity = e->transform->velocity;
     e->shape = std::make_shared<Shape>(
         m_enemyConfig.SR,
-        m_enemyConfig.VMAX,
-        sf::Color(m_enemyConfig.FR, m_enemyConfig.FG, m_enemyConfig.FB),
-        sf::Color(m_enemyConfig.OR, m_enemyConfig.OG, m_enemyConfig.OB),
+        randVert,
+        randColorGenerator(),
+        randColorGenerator(),
         m_enemyConfig.OT
     );
     e->shape->shape().setPosition(e->transform->pos.vec2f());
+}
+
+sf::Color Game::randColorGenerator()
+{
+    short randR = std::rand();
+    short randG = std::rand();
+    short randB = std::rand();
+
+    short colorMin = 0;
+    short colorMax = 255;
+
+    randR = colorMin + (randR % (colorMax - colorMin + 1));
+    randG = colorMin + (randG % (colorMax - colorMin + 1));
+    randB = colorMin + (randB % (colorMax - colorMin + 1));
+
+    return sf::Color(randR, randG, randB);
 }
 
 void Game::update()

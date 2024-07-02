@@ -39,9 +39,9 @@ struct EnemyConfig {
     int
         SR,   // Shape Radius
         CR,   // Collision Radius
-        FR, // Fillcolor Red
-        FG, // Fillcolor Green
-        FB, // Fillcolor Blue
+        FR,   // Fillcolor Red
+        FG,   // Fillcolor Green
+        FB,   // Fillcolor Blue
         OR,   // Outlinecolor Red
         OG,   // Outlinecolor Green
         OB,   // Outlinecolor Blue
@@ -84,7 +84,7 @@ struct FontConfig {
         FB  // Fontcolor Blue
     ;
     std::string
-        FP // Font Path
+        FP  // Font Path
     ;
 };
 
@@ -108,6 +108,7 @@ private:
     void spawner();
     void playerSpawner();
     void enemySpawner();
+    sf::Color randColorGenerator();
 
     int loadConfig();
     int applyConfig();
