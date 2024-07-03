@@ -124,6 +124,9 @@ private:
     void procBoundaryPlayerCollision();
     void procBoundaryEnemyCollision();
     void procEnemiesCollision();
+    void procBulletEnemyCollision();
+
+    bool isCollision(std::shared_ptr<Entity> e1, std::shared_ptr<Entity> e2);
 
     // collision debug tool
     std::shared_ptr<Entity> debugSpawner();

@@ -260,6 +260,7 @@ void Game::collision()
     procBoundaryPlayerCollision();
     procBoundaryEnemyCollision();
     procEnemiesCollision();
+    procBulletEnemyCollision();
 }
 
 void Game::lifespan()
@@ -424,6 +425,37 @@ void Game::procEnemiesCollision()
             }
         }
     }
+}
+
+void Game::procBulletEnemyCollision()
+{
+    auto bullets = m_entities.getEntities("bullet");
+    auto enemies = m_entities.getEntities("enemy");
+    for (auto b = bullets.begin(); b < bullets.end(); ++b) {
+        if ((*b) == nullptr)  {
+            continue;
+        }
+        for (auto e = enemies.begin(); e < enemies.end(); ++e) {
+            if ((*e) == nullptr) {
+                continue;
+            }
+            auto enemy = *e;
+            auto bullet = *b;
+            if (isCollision(enemy, bullet)) {
+                bullet->m_active = false;
+                enemy->m_active = false;
+            }
+        }
+    }
+}
+
+bool Game::isCollision(std::shared_ptr<Entity> e1, std::shared_ptr<Entity> e2)
+{
+    Vec2 e1Pos = e1->transform->pos;
+    Vec2 e2Pos = e2->transform->pos;
+    Vec2 dist = e2Pos - e1Pos;
+    double radiusSum = e1->shape->shape().getRadius() + e2->shape->shape().getRadius();
+    return dist.length2() <= radiusSum * radiusSum;
 }
 
 void Game::procKeyPressed(sf::Keyboard::Key key)
@@ -630,16 +662,13 @@ void Game::update()
     }
 }
 
-const unsigned ENEMY_SPAWN_INTERVAL = 600; // frames
+const unsigned ENEMY_SPAWN_INTERVAL = 300; // frames
 void Game::spawner()
 {
     if (m_player == nullptr) {
         playerSpawner();
     }
     if (m_currentFrame % ENEMY_SPAWN_INTERVAL == 0) {
-        if (m_entities.getEntities("enemy").size() >= 2) {
-            return;
-        }
         enemySpawner();
     }
 }
