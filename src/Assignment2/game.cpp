@@ -89,6 +89,19 @@ int Game::applyConfig()
         return 1;
     }
     m_window->setFramerateLimit(m_windowConfig.FL);
+
+    m_font = std::make_shared<sf::Font>();
+    if (!m_font->loadFromFile("fonts/SFMonoSC-Regular.ttf")) {
+        std::cout << "Load Failed!" << std::endl;
+    }
+
+    m_scoreDisp = std::make_shared<sf::Text>();
+
+    m_scoreDisp->setFont(*m_font);
+    m_scoreDisp->setFillColor(sf::Color(m_fontConfig.FR, m_fontConfig.FG, m_fontConfig.FB));
+    m_scoreDisp->setCharacterSize(m_fontConfig.FS);
+    m_scoreDisp->setPosition(0, 0);
+
     return 0;
 }
 
@@ -249,6 +262,8 @@ void Game::render()
     for (auto bullet = bullets.begin(); bullet < bullets.end(); ++bullet) {
         m_window->draw((*bullet)->shape->shape());
     }
+
+    m_window->draw(*m_scoreDisp);
 
     m_window->display();
     m_currentFrame++;
@@ -444,6 +459,7 @@ void Game::procBulletEnemyCollision()
             if (isCollision(enemy, bullet)) {
                 bullet->m_active = false;
                 enemy->m_active = false;
+                m_player->score->score += enemy->shape->shape().getPointCount() * 100;
             }
         }
     }
@@ -531,6 +547,8 @@ void Game::playerSpawner()
     e->shape->shape().setPosition(e->transform->pos.vec2f());
 
     e->input = std::make_shared<Input>();
+
+    e->score = std::make_shared<Score>();
 
     m_player = e;
 }
@@ -650,6 +668,7 @@ std::shared_ptr<Entity> Game::debugSpawner()
     return e;
 }
 
+const std::string SCORE_DISP_PREFIX = "Score: ";
 void Game::update()
 {
     m_entities.update();
@@ -659,6 +678,12 @@ void Game::update()
     auto entities = m_entities.getEntities();
     for (auto e = entities.begin(); e < entities.end(); ++e) {
         (*e)->update();
+    }
+    if (m_scoreDisp && m_player && m_player->score) {
+        std::string scoreStr = SCORE_DISP_PREFIX + std::to_string(m_player->score->score);
+        m_scoreDisp->setString(scoreStr);
+    } else {
+        std::cerr << "Error: Null pointer encountered when updating score display" << std::endl;
     }
 }
 

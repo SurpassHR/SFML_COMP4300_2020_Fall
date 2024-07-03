@@ -137,6 +137,8 @@ private:
     bool m_paused{ false };
     bool m_running{ true };
     long long unsigned m_currentFrame{ 0 };
+    std::shared_ptr<sf::Text> m_scoreDisp;
+    std::shared_ptr<sf::Font> m_font;
 
     const std::string &m_configPath;
 

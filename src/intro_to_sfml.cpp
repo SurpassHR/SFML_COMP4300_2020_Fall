@@ -94,7 +94,7 @@ int main() {
     sf::Text text;
     // 创建一个字体
     sf::Font sfMonoSC;
-    if (!sfMonoSC.loadFromFile("../fonts/SFMonoSC-Regular.ttf")) {
+    if (!sfMonoSC.loadFromFile("fonts/SFMonoSC-Regular.ttf")) {
         std::cout << "Load Failed!" << std::endl;
     }
     // 设置字体
