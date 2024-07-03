@@ -36,7 +36,7 @@ void Vec2::operator -= (const Vec2 &rhs)
 
 Vec2 Vec2::operator * (const double rhs) const
 {
-    return { x * rhs, y + rhs };
+    return { x * rhs, y * rhs };
 }
 
 Vec2 Vec2::operator * (const Vec2 &rhs) const

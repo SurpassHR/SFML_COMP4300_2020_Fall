@@ -5,6 +5,8 @@
 #include <ctime>
 #include <cmath>
 
+#define DEBUG false
+
 int Game::init()
 {
     if (loadConfig() != 0) {
@@ -336,6 +338,25 @@ void Game::procBoundaryEnemyCollision()
         if (bCollision || tCollision) {
             currV.y *= -1.0f;
         }
+
+        // entity overstep window border
+        bool rOverstep = (eP.x + eR > wRight) && (eP.x + eR + currV.x > wRight);
+        bool lOverstep = (eP.x - eR < wLeft) && (eP.x - eR + currV.x < wLeft);
+        bool bOverstep = (eP.y + eR > wBottom) && (eP.y + eR + currV.y > wBottom);
+        bool tOverstep = (eP.y - eR < wTop) && (eP.y - eR + currV.y < wTop);
+
+        if (rOverstep) {
+            currV.x = -1.0f;
+        }
+        if (lOverstep) {
+            currV.x = 1.0f;
+        }
+        if (bOverstep) {
+            currV.y = -1.0f;
+        }
+        if (tOverstep) {
+            currV.y = 1.0f;
+        }
     }
 }
 
@@ -348,15 +369,18 @@ void Game::procEnemiesCollision()
             auto e2 = enemies[j];
 
             Vec2 relativePos = e2->transform->pos - e1->transform->pos;
-            double dist2 = relativePos.length2();
+            double dist = relativePos.length();
             double radiusSum = e1->shape->shape().getRadius() + e2->shape->shape().getRadius();
 
-            if (dist2 <= radiusSum * radiusSum) {
-                // collision happens
-                Vec2 normal = relativePos.normalized();
-                Vec2 relativeVelocity = e2->transform->currVelocity - e1->transform->currVelocity;
+            // collision happens
+            Vec2 normal = relativePos.normalized();
+            Vec2 relativeVelocity = e2->transform->currVelocity - e1->transform->currVelocity;
 
-                double velocityAlongNormal = relativeVelocity.dot(normal);
+            double velocityAlongNormal = relativeVelocity.dot(normal);
+
+            double nextDist = dist - velocityAlongNormal;
+
+            if (nextDist * nextDist <= radiusSum * radiusSum) {
 
                 // object detaching
                 if (velocityAlongNormal > 0)
@@ -369,14 +393,14 @@ void Game::procEnemiesCollision()
                 impulseMagnitude /= 2;
 
                 Vec2 impulse = normal * impulseMagnitude;
-                e1->transform->currVelocity -= impulse / 2;
-                e2->transform->currVelocity += impulse / 2;
+                e1->transform->currVelocity -= impulse / 1;
+                e2->transform->currVelocity += impulse / 1;
 
                 // process overlap
-                double overlap = radiusSum - std::sqrt(dist2);
+                double overlap = radiusSum - dist;
                 Vec2 separation = normal * overlap * 0.5;
-                e1->transform->pos -= separation;
-                e2->transform->pos += separation;
+                e1->shape->shape().setPosition(e1->shape->shape().getPosition() - separation.vec2f());
+                e2->shape->shape().setPosition(e2->shape->shape().getPosition() + separation.vec2f());
             }
         }
     }
@@ -461,6 +485,16 @@ void Game::playerSpawner()
 
 void Game::enemySpawner()
 {
+    if (DEBUG) {
+        auto e1 = debugSpawner();
+        e1->transform->currVelocity = Vec2(1.0f, 0.0f);
+        e1->shape->shape().setPosition({ 32.0f, 192.0f });
+        auto e2 = debugSpawner();
+        e2->transform->currVelocity = Vec2(-1.0f, 0.0f);
+        e2->shape->shape().setPosition({ 688.0f, 192.0f });
+        return;
+    }
+
     // avoid spawning enemy on the border
     int wWidth = m_windowConfig.WW - m_enemyConfig.SR;
     int wHeight = m_windowConfig.WH - m_enemyConfig.SR;
@@ -516,6 +550,28 @@ sf::Color Game::randColorGenerator()
     randB = colorMin + (randB % (colorMax - colorMin + 1));
 
     return sf::Color(randR, randG, randB);
+}
+
+std::shared_ptr<Entity> Game::debugSpawner()
+{
+    auto e = m_entities.addEntity("enemy");
+    int minVert = m_enemyConfig.VMIN;
+    int maxVert = m_enemyConfig.VMAX;
+    int vertDiff = maxVert - minVert;
+    int randVert = minVert + (std::rand() % (vertDiff + 1));
+    e->shape = std::make_shared<Shape>(
+        m_enemyConfig.SR,
+        randVert,
+        randColorGenerator(),
+        randColorGenerator(),
+        m_enemyConfig.OT
+    );
+    e->transform = std::make_shared<Transform>(
+        Vec2(m_enemyConfig.SR, m_enemyConfig.SR),
+        Vec2(0.0f, 0.0f),
+        1.0f
+    );
+    return e;
 }
 
 void Game::update()

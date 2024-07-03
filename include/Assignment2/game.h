@@ -122,6 +122,9 @@ private:
     void procBoundaryPlayerCollision();
     void procBoundaryEnemyCollision();
     void procEnemiesCollision();
+
+    // collision debug tool
+    std::shared_ptr<Entity> debugSpawner();
 private:
     std::shared_ptr<sf::RenderWindow> m_window;
     EntityManager m_entities;
