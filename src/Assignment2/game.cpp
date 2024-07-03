@@ -215,7 +215,7 @@ void Game::userInput()
             procKeyReleased(event.key.code);
         }
         if (event.type == sf::Event::EventType::MouseButtonPressed) {
-            enemySpawner();
+            bulletSpawner(Vec2(event.mouseButton.x, event.mouseButton.y));
             // std::cout << "mousePressed: " << g_mouseMap[event.mouseButton.button] << " [" << event.mouseButton.x << ", " << event.mouseButton.y << "]" << std::endl;
         }
         if (event.type == sf::Event::EventType::MouseButtonReleased) {
@@ -244,7 +244,7 @@ void Game::render()
     }
 
     // render bullets
-    auto bullets = m_entities.getEntities("bullets");
+    auto bullets = m_entities.getEntities("bullet");
     for (auto bullet = bullets.begin(); bullet < bullets.end(); ++bullet) {
         m_window->draw((*bullet)->shape->shape());
     }
@@ -534,6 +534,30 @@ void Game::enemySpawner()
         m_enemyConfig.OT
     );
     e->shape->shape().setPosition(e->transform->pos.vec2f());
+}
+
+void Game::bulletSpawner(const Vec2 &mPos)
+{
+    Vec2 pPos = m_player->transform->pos;
+    Vec2 relaDire = (mPos - pPos).normalized();
+    double length = m_player->shape->shape().getRadius();
+    Vec2 bulletGenPos = pPos + relaDire * length;
+    auto bullet = m_entities.addEntity("bullet");
+    Vec2 pVelocity = m_player->transform->currVelocity;
+    bullet->shape = std::make_shared<Shape>(
+        m_bulletConfig.SR,
+        30,
+        sf::Color(m_bulletConfig.FR, m_bulletConfig.FG, m_bulletConfig.FB),
+        sf::Color(m_bulletConfig.OR, m_bulletConfig.OG, m_bulletConfig.OB),
+        m_bulletConfig.OT
+    );
+    bullet->transform = std::make_shared<Transform>(
+        bulletGenPos,
+        // bullet initial have the speed of player
+        Vec2(10.0f, 10.0f) * relaDire + pVelocity,
+        1.0f
+    );
+    bullet->transform->currVelocity = bullet->transform->velocity;
 }
 
 sf::Color Game::randColorGenerator()

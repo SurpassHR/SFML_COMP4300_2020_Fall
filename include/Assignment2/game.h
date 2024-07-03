@@ -108,6 +108,7 @@ private:
     void spawner();
     void playerSpawner();
     void enemySpawner();
+    void bulletSpawner(const Vec2 &mPos);
     sf::Color randColorGenerator();
 
     int loadConfig();
