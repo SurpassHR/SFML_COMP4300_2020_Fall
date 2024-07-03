@@ -28,6 +28,7 @@ int Game::run()
         spawner();
         userInput();
         if (!m_paused) {
+            lifespan();
             update();
             movement();
             collision();
@@ -259,6 +260,25 @@ void Game::collision()
     procBoundaryPlayerCollision();
     procBoundaryEnemyCollision();
     procEnemiesCollision();
+}
+
+void Game::lifespan()
+{
+    auto entities = m_entities.getEntities();
+    for (auto e = entities.begin(); e < entities.end(); ++e) {
+        // situation1: entity out of frame
+        int eR = (*e)->shape->shape().getRadius();
+        if (((*e)->transform->pos.x - eR > m_window->getSize().x) ||
+            ((*e)->transform->pos.x + eR < 0) ||
+            ((*e)->transform->pos.y - eR > m_window->getSize().y) ||
+            ((*e)->transform->pos.y + eR < 0)) {
+            (*e)->m_active = false;
+        }
+        // situation2: entity life at an end
+        if (m_currentFrame - (*e)->lifespan->frameCreated > (*e)->lifespan->lifespan) {
+            (*e)->m_active = false;
+        }
+    }
 }
 
 // normalized direction vector
@@ -500,7 +520,7 @@ void Game::enemySpawner()
     int wHeight = m_windowConfig.WH - m_enemyConfig.SR;
     int origin = 0.0f + m_enemyConfig.SR;
 
-    auto e = m_entities.addEntity("enemy");
+    auto e = m_entities.addEntity("enemy", m_currentFrame);
     if (e == nullptr) {
         return;
     }
@@ -542,7 +562,7 @@ void Game::bulletSpawner(const Vec2 &mPos)
     Vec2 relaDire = (mPos - pPos).normalized();
     double length = m_player->shape->shape().getRadius();
     Vec2 bulletGenPos = pPos + relaDire * length;
-    auto bullet = m_entities.addEntity("bullet");
+    auto bullet = m_entities.addEntity("bullet", m_currentFrame);
     Vec2 pVelocity = m_player->transform->currVelocity;
     bullet->shape = std::make_shared<Shape>(
         m_bulletConfig.SR,
@@ -578,7 +598,7 @@ sf::Color Game::randColorGenerator()
 
 std::shared_ptr<Entity> Game::debugSpawner()
 {
-    auto e = m_entities.addEntity("enemy");
+    auto e = m_entities.addEntity("enemy", m_currentFrame);
     int minVert = m_enemyConfig.VMIN;
     int maxVert = m_enemyConfig.VMAX;
     int vertDiff = maxVert - minVert;
@@ -610,12 +630,13 @@ void Game::update()
     }
 }
 
+const unsigned ENEMY_SPAWN_INTERVAL = 600; // frames
 void Game::spawner()
 {
     if (m_player == nullptr) {
         playerSpawner();
     }
-    if (m_currentFrame % 600 == 0) {
+    if (m_currentFrame % ENEMY_SPAWN_INTERVAL == 0) {
         if (m_entities.getEntities("enemy").size() >= 2) {
             return;
         }

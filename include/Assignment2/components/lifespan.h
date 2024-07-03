@@ -3,11 +3,11 @@
 
 class Lifespan {
 public:
-    Lifespan(int lifespan, int createFrame) : lifespan(lifespan), frameCreated(createFrame) {}
+    Lifespan(unsigned long long lifespan, unsigned long long createFrame) : lifespan(lifespan), frameCreated(createFrame) {}
     ~Lifespan() = default;
 public:
-    int lifespan{ 0 };
-    int frameCreated{ 0 };
+    unsigned long long lifespan{ 0 };
+    unsigned long long frameCreated{ 0 };
 };
 
 #endif // LIFESPAN_H

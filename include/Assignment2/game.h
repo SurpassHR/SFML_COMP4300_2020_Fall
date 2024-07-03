@@ -101,6 +101,7 @@ private:
     void userInput();
     void movement();
     void collision();
+    void lifespan();
     void update();
     void render();
 
@@ -132,7 +133,7 @@ private:
     std::shared_ptr<Entity> m_player;
     bool m_paused{ false };
     bool m_running{ true };
-    long long m_currentFrame{ 0 };
+    long long unsigned m_currentFrame{ 0 };
 
     const std::string &m_configPath;
 

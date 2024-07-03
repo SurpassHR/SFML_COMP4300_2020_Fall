@@ -7,7 +7,7 @@ class EntityManager {
 public:
     void init();
     void update();
-    std::shared_ptr<Entity> addEntity(const std::string &tag);
+    std::shared_ptr<Entity> addEntity(const std::string &tag, unsigned long long frameCreated, unsigned long long lifespan = ULONG_LONG_MAX);
     std::vector<std::shared_ptr<Entity>> getEntities();
     std::vector<std::shared_ptr<Entity>> getEntities(const std::string &tag);
 public:

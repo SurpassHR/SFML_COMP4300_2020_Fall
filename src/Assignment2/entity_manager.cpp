@@ -21,14 +21,22 @@ void EntityManager::update()
     m_toAdd.clear();
     m_entities.clear();
     m_entities = activeEntities;
+    for (auto &entities : m_entityMap) {
+        for (auto iter = entities.second.begin(); iter < entities.second.end(); ++iter) {
+            if (!(*iter)->m_active) {
+                entities.second.erase(iter);
+            }
+        }
+    }
 }
 
-std::shared_ptr<Entity> EntityManager::addEntity(const std::string &tag)
+std::shared_ptr<Entity> EntityManager::addEntity(const std::string &tag, unsigned long long frameCreated, unsigned long long lifespan)
 {
     std::shared_ptr<Entity> e = std::make_shared<Entity>(tag, m_entityNum++);
     if (e == nullptr) {
         return nullptr;
     }
+    e->lifespan = std::make_shared<Lifespan>(lifespan, frameCreated);
     e->m_active = true;
     m_toAdd.push_back(e);
     m_entityMap[tag].push_back(e);
