@@ -34,6 +34,7 @@ public:
     double dist(const Vec2 &rhs);
     double dist2(const Vec2 &rhs);
     double dot(const Vec2 &rhs);
+    void rotate(const double angle);
 };
 
 #endif // VEC2_H

@@ -6,6 +6,9 @@
 #include "entity_manager.h"
 #include "entity.h"
 
+const short COLOR_MIN = 0;
+const short COLOR_MAX = 255;
+
 struct WindowConfig {
     int
         WW, // Window Width
@@ -109,6 +112,7 @@ private:
     void spawner();
     void playerSpawner();
     void enemySpawner();
+    void smallEnemySpawner(const std::shared_ptr<Entity> enemy);
     void bulletSpawner(const Vec2 &mPos);
     sf::Color randColorGenerator();
 
@@ -127,6 +131,8 @@ private:
     void procBulletEnemyCollision();
 
     bool isCollision(std::shared_ptr<Entity> e1, std::shared_ptr<Entity> e2);
+
+    void decTransparencyByLeftLife(const std::shared_ptr<Entity> e, unsigned long long leftFrame);
 
     // collision debug tool
     std::shared_ptr<Entity> debugSpawner();

@@ -36,7 +36,7 @@ std::shared_ptr<Entity> EntityManager::addEntity(const std::string &tag, unsigne
     if (e == nullptr) {
         return nullptr;
     }
-    e->lifespan = std::make_shared<Lifespan>(lifespan, frameCreated);
+    e->lifespan = std::make_shared<Lifespan>(frameCreated, lifespan);
     e->m_active = true;
     m_toAdd.push_back(e);
     m_entityMap[tag].push_back(e);

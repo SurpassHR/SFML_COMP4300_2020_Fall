@@ -1,9 +1,13 @@
 #ifndef LIFESPAN_H
 #define LIFESPAN_H
 
+#include <cstdlib>
+
 class Lifespan {
 public:
-    Lifespan(unsigned long long lifespan, unsigned long long createFrame) : lifespan(lifespan), frameCreated(createFrame) {}
+    Lifespan(unsigned long long createFrame, unsigned long long lifespan = ULONG_LONG_MAX)
+        : frameCreated(createFrame),
+        lifespan(lifespan) {}
     ~Lifespan() = default;
 public:
     unsigned long long lifespan{ 0 };

@@ -4,6 +4,7 @@
 #include <memory>
 #include <ctime>
 #include <cmath>
+#include "utils.h"
 
 #define DEBUG false
 
@@ -257,6 +258,12 @@ void Game::render()
         m_window->draw((*e)->shape->shape());
     }
 
+    // render small enemies
+    auto sEnemies = m_entities.getEntities("small_enemy");
+    for (auto sE = sEnemies.begin(); sE < sEnemies.end(); ++sE) {
+        m_window->draw((*sE)->shape->shape());
+    }
+
     // render bullets
     auto bullets = m_entities.getEntities("bullet");
     for (auto bullet = bullets.begin(); bullet < bullets.end(); ++bullet) {
@@ -291,7 +298,9 @@ void Game::lifespan()
             (*e)->m_active = false;
         }
         // situation2: entity life at an end
-        if (m_currentFrame - (*e)->lifespan->frameCreated > (*e)->lifespan->lifespan) {
+        unsigned long long durationFrame = m_currentFrame - (*e)->lifespan->frameCreated;
+        decTransparencyByLeftLife(*e, durationFrame);
+        if (durationFrame >= (*e)->lifespan->lifespan) {
             (*e)->m_active = false;
         }
     }
@@ -460,6 +469,7 @@ void Game::procBulletEnemyCollision()
                 bullet->m_active = false;
                 enemy->m_active = false;
                 m_player->score->score += enemy->shape->shape().getPointCount() * 100;
+                smallEnemySpawner(enemy);
             }
         }
     }
@@ -472,6 +482,19 @@ bool Game::isCollision(std::shared_ptr<Entity> e1, std::shared_ptr<Entity> e2)
     Vec2 dist = e2Pos - e1Pos;
     double radiusSum = e1->shape->shape().getRadius() + e2->shape->shape().getRadius();
     return dist.length2() <= radiusSum * radiusSum;
+}
+
+void Game::decTransparencyByLeftLife(const std::shared_ptr<Entity> e, unsigned long long durationFrame)
+{
+    if (e == nullptr) {
+        LOG("nullptr err");
+    }
+    sf::Color fColor = e->shape->shape().getFillColor();
+    int lifespan = e->lifespan->lifespan;
+    bool isConstant = lifespan == ULONG_LONG_MAX;
+    unsigned short alpha = isConstant ? COLOR_MAX : static_cast<unsigned short>(COLOR_MAX * static_cast<double>(lifespan - durationFrame) / lifespan);
+    e->shape->setFillColorAlpha(alpha);
+    e->shape->setOutlineColorAlpha(alpha);
 }
 
 void Game::procKeyPressed(sf::Keyboard::Key key)
@@ -550,6 +573,8 @@ void Game::playerSpawner()
 
     e->score = std::make_shared<Score>();
 
+    e->lifespan = std::make_shared<Lifespan>(m_currentFrame);
+
     m_player = e;
 }
 
@@ -604,6 +629,36 @@ void Game::enemySpawner()
         m_enemyConfig.OT
     );
     e->shape->shape().setPosition(e->transform->pos.vec2f());
+    e->lifespan = std::make_shared<Lifespan>(m_currentFrame);
+}
+
+void Game::smallEnemySpawner(const std::shared_ptr<Entity> enemy)
+{
+    int ePoints = enemy->shape->shape().getPointCount();
+    double smallESpeed = 3.0f;
+    static const double ROUND_ANGLE = 360.0f;
+    double angleRange = ROUND_ANGLE / ePoints;
+    Vec2 startDire(0.0f, 1.0f);
+    long long unsigned smallELifespan = static_cast<long long unsigned>(m_enemyConfig.L);
+    for (int i = 0; i < ePoints; ++i) {
+        auto e = m_entities.addEntity("small_enemy", m_currentFrame, smallELifespan);
+        e->shape = std::make_shared<Shape>(enemy->shape);
+        if (e->shape == nullptr) {
+            LOG("nullptr err");
+            continue;
+        }
+        float r = enemy->shape->shape().getRadius() / 2;
+        e->shape->shape().setRadius(r);
+        e->shape->shape().setOrigin({r, r});
+
+        e->transform = std::make_shared<Transform>(enemy->transform);
+        if (e->transform == nullptr) {
+            LOG("nullptr err");
+            continue;
+        }
+        e->transform->currVelocity = startDire * smallESpeed;
+        startDire.rotate(angleRange);
+    }
 }
 
 void Game::bulletSpawner(const Vec2 &mPos)
@@ -628,6 +683,7 @@ void Game::bulletSpawner(const Vec2 &mPos)
         1.0f
     );
     bullet->transform->currVelocity = bullet->transform->velocity;
+    bullet->lifespan = std::make_shared<Lifespan>(m_currentFrame);
 }
 
 sf::Color Game::randColorGenerator()
@@ -636,12 +692,9 @@ sf::Color Game::randColorGenerator()
     short randG = std::rand();
     short randB = std::rand();
 
-    short colorMin = 0;
-    short colorMax = 255;
-
-    randR = colorMin + (randR % (colorMax - colorMin + 1));
-    randG = colorMin + (randG % (colorMax - colorMin + 1));
-    randB = colorMin + (randB % (colorMax - colorMin + 1));
+    randR = COLOR_MIN + (randR % (COLOR_MAX - COLOR_MIN + 1));
+    randG = COLOR_MIN + (randG % (COLOR_MAX - COLOR_MIN + 1));
+    randB = COLOR_MIN + (randB % (COLOR_MAX - COLOR_MIN + 1));
 
     return sf::Color(randR, randG, randB);
 }

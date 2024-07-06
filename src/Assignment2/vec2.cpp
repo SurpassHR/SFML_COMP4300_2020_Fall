@@ -98,6 +98,7 @@ double Vec2::length()
 {
     return std::sqrt(x * x + y * y);
 }
+
 double Vec2::length2()
 {
     return x * x + y * y;
@@ -118,7 +119,6 @@ double Vec2::dist(const Vec2 &rhs)
     return std::sqrt(std::pow(rhs.x - x, 2) + std::pow(rhs.y - y, 2));
 }
 
-
 double Vec2::dist2(const Vec2 &rhs)
 {
     return std::pow(rhs.x - x, 2) + std::pow(rhs.y - y, 2);
@@ -127,4 +127,15 @@ double Vec2::dist2(const Vec2 &rhs)
 double Vec2::dot(const Vec2 &rhs)
 {
     return x * rhs.x + y * rhs.y;
+}
+
+void Vec2::rotate(const double angle)
+{
+    double angleInRadians = angle * M_PI / 180.0;
+    double cosTheta = std::cos(angleInRadians);
+    double sinTheta = std::sin(angleInRadians);
+    double newX = x * cosTheta - y * sinTheta;
+    double newY = x * sinTheta + y * cosTheta;
+    x = newX;
+    y = newY;
 }
