@@ -8,7 +8,7 @@
 
 ### Assignement 2
 
-https://github.com/SurpassHR/SFML_COMP4300_2020_Fall/assets/47974229/3be5f199-4ba6-4376-84e8-fbf1e37be472
+https://github.com/SurpassHR/SFML_COMP4300_2020_Fall/assets/47974229/857e73fc-571f-4495-b2f1-1d007921800d
 
 ## 开发环境配置
 
