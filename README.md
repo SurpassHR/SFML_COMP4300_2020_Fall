@@ -8,8 +8,7 @@
 
 ### Assignement 2
 
-<video src="https://raw.githubusercontent.com/SurpassHR/SFML_COMP4300_2020_Fall/master/etc/project_progress/assignment2_progress_7-6-2024.mp4" controls="controls" style="max-width: 730px;">
-</video>
+https://github.com/SurpassHR/SFML_COMP4300_2020_Fall/assets/47974229/3be5f199-4ba6-4376-84e8-fbf1e37be472
 
 ## 开发环境配置
 
