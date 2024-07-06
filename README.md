@@ -4,6 +4,13 @@
 与我在工作上使用的一些设计思想不谋而合。在个人项目中以小游戏项目的方式相互印证的方法，来掌握工作一年来所学知识，
 趣味性与实用性相结合，大赞。
 
+## 项目当前进展
+
+### Assignement 2
+
+<video src="https://raw.githubusercontent.com/SurpassHR/SFML_COMP4300_2020_Fall/master/etc/project_progress/assignment2_progress_7-6-2024.mp4" controls="controls" style="max-width: 730px;">
+</video>
+
 ## 开发环境配置
 
 1. 配置vscode clangd cmake环境
