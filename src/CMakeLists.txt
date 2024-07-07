@@ -16,5 +16,7 @@ foreach(source_file ${SOURCES})
 endforeach()
 
 add_subdirectory(Assignment1)
-add_subdirectory(ECS)
+add_subdirectory(ECS_Practice)
 add_subdirectory(Assignment2)
+add_subdirectory(Assignment3)
+add_subdirectory(Public)

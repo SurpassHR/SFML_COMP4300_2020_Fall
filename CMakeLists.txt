@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 
 # 设置项目名称
-project(SFML_INTRO)
+project(SFML_PRACTICE)
 
 # 导出compile_commands.json文件
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)

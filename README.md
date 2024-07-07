@@ -4,6 +4,12 @@
 与我在工作上使用的一些设计思想不谋而合。在个人项目中以小游戏项目的方式相互印证的方法，来掌握工作一年来所学知识，
 趣味性与实用性相结合，大赞。
 
+- 本项目有几个初衷:
+    - C++实践，C++嵌入式开发总是与硬件打交道导致感觉违背了我学编程最初的动力，简单来说不是我想写的东西；
+    - 学习CMake，CMake很强大，希望深入学习；
+    - 上班更体面地摸鱼；
+    - 可能也会在这里做一些github workflow、CI的尝试；
+
 ## 项目当前进展
 
 ### Assignment 1
@@ -164,3 +170,43 @@ struct StudentAge {
 };
 ```
 - 那么在使用StudentAge类型的变量时就可以直接进行大小比较了
+
+## CMake Tricks
+
+- 如果我希望将一个仓库内的源文件作为公共组件提供给其他的应用使用，那么我可以将其编成一个单独的库。
+
+- 假设现在有如下代码仓结构:
+
+```bash
+.
+|-- CMakeLists.txt
+|-- include
+|   |-- Application
+|   `-- Public
+`-- src
+    |-- CMakeLists.txt
+    |-- Application
+    |   |-- CMakeLists.txt
+    |   `-- main.cpp
+    `-- Public
+        |-- CMakeLists.txt
+        `-- utils.cpp
+```
+
+- Public组件仓 `CMakeLists.txt` 配置如下:
+
+```cmake
+# src/Public/CMakeLists.txt
+FILE(GLOB SRC ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
+ADD_LIBRARY(Public STATIC ${SRC})
+TARGET_INCLUDE_DIRECTORIES(Public PUBLIC ${CMAKE_SOURCE_DIR}/include/Public)
+```
+
+- Application应用仓 `CMakeLists.txt` 配置如下:
+
+```cmake
+# src/Application/CMakeLists.txt
+FILE(GLOB SRC ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
+ADD_EXECUTABLE("Application" ${SRC})
+TARGET_LINK_LIBRARIES("Application" PRIVATE Public)
+```
