@@ -6,6 +6,10 @@
 
 ## 项目当前进展
 
+### Assignment 1
+
+https://github.com/SurpassHR/SFML_COMP4300_2020_Fall/assets/47974229/0dee72be-545b-4deb-9d65-0bbfed5ba68d
+
 ### Assignement 2
 
 https://github.com/SurpassHR/SFML_COMP4300_2020_Fall/assets/47974229/857e73fc-571f-4495-b2f1-1d007921800d
