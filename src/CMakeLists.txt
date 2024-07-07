@@ -1,5 +1,4 @@
 file(GLOB SOURCES
-    intro_to_sfml.cpp
     gravity.cpp
 )
 
@@ -16,5 +15,6 @@ foreach(source_file ${SOURCES})
     target_compile_features(${target_name} PRIVATE cxx_std_17)
 endforeach()
 
+add_subdirectory(Assignment1)
 add_subdirectory(ECS)
 add_subdirectory(Assignment2)
