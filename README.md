@@ -171,6 +171,28 @@ struct StudentAge {
 ```
 - 那么在使用StudentAge类型的变量时就可以直接进行大小比较了
 
+### Log Macro
+
+- 我希望有一个快捷的方式来输出控制台调试信息，调试信息中带有文件、行号等关键信息，且像 `printf` 一样好用
+
+```c++
+void log(const std::string& file, int line, const char* format, ...)
+{
+    const int BUFFER_SIZE = 1024;
+    char buffer[BUFFER_SIZE];
+
+    va_list args;
+    va_start(args, format);
+    vsnprintf(buffer, BUFFER_SIZE, format, args);
+    va_end(args);
+
+    std::string message(buffer);
+
+    printf("[%s:%d]: %s\n", getFileName(file.c_str()), line, message.c_str());
+}
+#define LOG(format, ...) log(__FILE__, __LINE__, format, ##__VA_ARGS__)
+```
+
 ## CMake Tricks
 
 - 如果我希望将一个仓库内的源文件作为公共组件提供给其他的应用使用，那么我可以将其编成一个单独的库。
