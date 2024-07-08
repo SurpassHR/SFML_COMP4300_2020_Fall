@@ -10,6 +10,7 @@ set(CMAKE_CXX_COMPILER g++)
 # 设置C++标准
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_CXX_FLAGS "-Werror -Wall")
 # 查找SFML库
 set(LIB_SFML $ENV{SFML}/lib)
 set(SFML_DIR ${LIB_SFML}/cmake/SFML)

@@ -408,8 +408,8 @@ void Game::procBoundaryEnemyCollision()
 void Game::procEnemiesCollision()
 {
     auto enemies = m_entities.getEntities("enemy");
-    for (int i = 0; i < enemies.size(); ++i) {
-        for (int j = i + 1; j < enemies.size(); ++j) {
+    for (size_t i = 0; i < enemies.size(); ++i) {
+        for (size_t j = i + 1; j < enemies.size(); ++j) {
             auto e1 = enemies[i];
             auto e2 = enemies[j];
 
@@ -489,9 +489,8 @@ void Game::decTransparencyByLeftLife(const std::shared_ptr<Entity> e, unsigned l
     if (e == nullptr) {
         LOG("nullptr err");
     }
-    sf::Color fColor = e->shape->shape().getFillColor();
-    int lifespan = e->lifespan->lifespan;
-    bool isConstant = lifespan == ULONG_LONG_MAX;
+    long long unsigned lifespan = e->lifespan->lifespan;
+    bool isConstant = (lifespan == ULONG_LONG_MAX);
     unsigned short alpha = isConstant ? COLOR_MAX : static_cast<unsigned short>(COLOR_MAX * static_cast<double>(lifespan - durationFrame) / lifespan);
     e->shape->setFillColorAlpha(alpha);
     e->shape->setOutlineColorAlpha(alpha);

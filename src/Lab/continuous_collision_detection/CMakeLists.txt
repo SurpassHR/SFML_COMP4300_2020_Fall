@@ -1,0 +1,6 @@
+FILE(GLOB SRC ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
+SET(sub_project "continuous_collision_detection")
+SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin)
+ADD_EXECUTABLE(${sub_project} ${SRC})
+TARGET_SOURCES(${sub_project} PRIVATE ${SRC})
+TARGET_LINK_LIBRARIES(${sub_project} PRIVATE Public sfml-system)

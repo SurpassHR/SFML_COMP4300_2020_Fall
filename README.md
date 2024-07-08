@@ -195,6 +195,8 @@ void log(const std::string& file, int line, const char* format, ...)
 
 ## CMake Tricks
 
+### 共享库 - Shared Library
+
 - 如果我希望将一个仓库内的源文件作为公共组件提供给其他的应用使用，那么我可以将其编成一个单独的库。
 
 - 假设现在有如下代码仓结构:
@@ -232,3 +234,7 @@ FILE(GLOB SRC ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 ADD_EXECUTABLE("Application" ${SRC})
 TARGET_LINK_LIBRARIES("Application" PRIVATE Public)
 ```
+
+### `SET(EXECUTABLE_OUTPUT_PATH /path/to/bin/dir)`的生效范围
+
+- `SET(EXECUTABLE_OUTPUT_PATH /path/to/bin/dir)`的生效范围是从定义这一句开始，到CMakeLists.txt文件结束

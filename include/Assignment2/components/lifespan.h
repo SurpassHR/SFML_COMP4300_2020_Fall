@@ -10,8 +10,8 @@ public:
         lifespan(lifespan) {}
     ~Lifespan() = default;
 public:
-    unsigned long long lifespan{ 0 };
     unsigned long long frameCreated{ 0 };
+    unsigned long long lifespan{ 0 };
 };
 
 #endif // LIFESPAN_H
