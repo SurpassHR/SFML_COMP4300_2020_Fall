@@ -29,7 +29,7 @@ public:
     Vec2 normalized();
     double length();
     double length2();
-    sf::Vector2f vec2f();
+    sf::Vector2f vec2f() const;
     void print(const std::string &name);
     double dist(const Vec2 &rhs);
     double dist2(const Vec2 &rhs);

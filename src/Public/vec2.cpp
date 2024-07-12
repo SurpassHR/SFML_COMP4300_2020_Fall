@@ -104,7 +104,7 @@ double Vec2::length2()
     return x * x + y * y;
 }
 
-sf::Vector2f Vec2::vec2f()
+sf::Vector2f Vec2::vec2f() const
 {
     return sf::Vector2f(x, y);
 }
