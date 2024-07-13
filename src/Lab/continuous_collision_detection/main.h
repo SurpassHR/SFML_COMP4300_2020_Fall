@@ -35,7 +35,7 @@ enum EntityShape : unsigned short {
 
 class Entity {
 public:
-    Entity() = default;
+    Entity(int zIndex) : m_zIndex(zIndex) {}
     ~Entity() = default;
 public:
     void init(EntityShape shape, const void *para);
@@ -44,20 +44,27 @@ public:
     {
         return m_zIndex;
     }
-private:
-    std::shared_ptr<sf::CircleShape> circle;
-    std::shared_ptr<sf::RectangleShape> rect;
+    void update();
+public:
+    Vec2 pos{ 0.0f, 0.0f };
+    Vec2 lastPos{ 0.0f, 0.0f };
+    Vec2 velo{ 0.0f, 0.0f };
+    Vec2 acc{ 0.0f, 0.0f };
+    double r;
+    Vec2 size{ 1.0f, 1.0f };
 private:
     void initCircle(std::shared_ptr<sf::CircleShape> e, const CirclePara &para);
     void initRect(std::shared_ptr<sf::RectangleShape> e, const RectPara &para);
 private:
+    std::shared_ptr<sf::CircleShape> m_circle;
+    std::shared_ptr<sf::RectangleShape> m_rect;
     EntityShape m_shape{ INVALID_SHAPE };
     int m_zIndex{ 0 };
 };
 
 class Lab {
 public:
-    Lab() = default;
+    Lab(unsigned frameLimit) : m_frameLimit(frameLimit), m_deltaT(1.0f / frameLimit) {}
     ~Lab() = default;
 public:
     int init();
@@ -66,14 +73,24 @@ private:
     void procEvent();
     void procKeypress(sf::Event::KeyEvent kEvent);
     void logic();
+
+    void initLogic();
+
+    void movement();
+
     void render();
 
     void labNormalCollisionDetect();
     void labContinuousCollisionDetect();
+    void updateCorrection();
 private:
     std::shared_ptr<sf::RenderWindow> m_window;
     bool m_isRunning{ true };
     std::map<std::string, std::shared_ptr<Entity>> m_entities;
+    std::vector<std::shared_ptr<Entity>> m_entitiesSeq;
+    bool m_init{ false };
+    unsigned m_frameLimit{ 60 };
+    double m_deltaT{ 1 };
 };
 
 #endif // MAIN_H
