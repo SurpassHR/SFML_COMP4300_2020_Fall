@@ -289,12 +289,12 @@ void Lab::initLogic()
 {
     auto cir11 = m_entities["cir11"];
     // cir11->acc = { 0, 5.0f };
-    cir11->velo = { 10000.0f, 10000.0f };
+    cir11->velo = { 5000.0f, 5000.0f };
     cir11->pos.x = 365.0f;
 
     auto cir21 = m_entities["cir21"];
     // cir21->acc = { 0, 5.0f };
-    cir21->velo = { 10000.0f, 10000.0f };
+    cir21->velo = { 5000.0f, 5000.0f };
     cir21->pos.x = 1025.0f;
 }
 
