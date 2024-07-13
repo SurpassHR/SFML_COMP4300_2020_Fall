@@ -20,6 +20,12 @@ https://github.com/SurpassHR/SFML_COMP4300_2020_Fall/assets/47974229/0dee72be-54
 
 https://github.com/SurpassHR/SFML_COMP4300_2020_Fall/assets/47974229/857e73fc-571f-4495-b2f1-1d007921800d
 
+### Lab
+
+#### Continuous Collision Detection
+
+https://github.com/user-attachments/assets/4946c617-4435-40f6-b542-d739b69dff1e
+
 ## 开发环境配置
 
 1. 配置vscode clangd cmake环境
