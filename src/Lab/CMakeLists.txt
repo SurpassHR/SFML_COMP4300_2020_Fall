@@ -1,1 +1,2 @@
 ADD_SUBDIRECTORY(continuous_collision_detection)
+ADD_SUBDIRECTORY(side-scrolling_action_platformer_frame)

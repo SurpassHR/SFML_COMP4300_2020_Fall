@@ -75,49 +75,7 @@ void Entity::initRect(std::shared_ptr<sf::RectangleShape> e, const RectPara &par
     size = para.size;
 }
 
-int Lab::init()
-{
-    m_window = std::make_shared<sf::RenderWindow>(sf::VideoMode(1366, 768), "continuous collision detection");
-    m_window->setFramerateLimit(m_frameLimit);
-
-    RectPara rectPara;
-    CirclePara cirPara;
-
-    std::shared_ptr<Entity> rect1 = std::make_shared<Entity>(1);
-    rectPara.pos = { 100, 130 };
-    rect1->init(EntityShape::RECT_SHAPE, &rectPara);
-    std::shared_ptr<Entity> cir11 = std::make_shared<Entity>(1000);
-    cirPara.pos = rectPara.pos + Vec2(cirPara.r, cirPara.r);
-    cirPara.pos.print("cir11");
-    cir11->init(EntityShape::CIRCLE_SHAPE, &cirPara);
-
-    m_entities["rect1"] = rect1;
-    m_entitiesSeq.push_back(rect1);
-    m_entities["cir11"] = cir11;
-    m_entitiesSeq.push_back(cir11);
-
-    std::shared_ptr<Entity> rect2 =std::make_shared<Entity>(1);
-    rectPara.pos = { 760, 130 };
-    rect2->init(EntityShape::RECT_SHAPE, &rectPara);
-    std::shared_ptr<Entity> cir21 = std::make_shared<Entity>(1000);
-    cirPara.pos = rectPara.pos + Vec2(cirPara.r, cirPara.r);
-    cirPara.pos.print("cir21");
-    cir21->init(EntityShape::CIRCLE_SHAPE, &cirPara);
-
-    m_entities["rect2"] = rect2;
-    m_entitiesSeq.push_back(rect2);
-    m_entities["cir21"] = cir21;
-    m_entitiesSeq.push_back(cir21);
-
-    std::sort(m_entitiesSeq.begin(), m_entitiesSeq.end(),
-        [](const auto &a, const auto &b){
-            return a->zIndex() < b->zIndex();
-    });
-
-    return 0;
-}
-
-void Lab::labNormalCollisionDetect()
+void CollisionLab::labNormalCollisionDetect()
 {
     Entity lab = *m_entities["rect1"];
 
@@ -142,7 +100,7 @@ void Lab::labNormalCollisionDetect()
     cir11.velo.y *= vertColl ? -1 : 1;
 }
 
-void Lab::labContinuousCollisionDetect()
+void CollisionLab::labContinuousCollisionDetect()
 {
     Entity lab = *m_entities["rect2"];
 
@@ -225,67 +183,64 @@ void Lab::labContinuousCollisionDetect()
     }
 }
 
-void Lab::updateCorrection()
+void CollisionLab::updateCorrection()
 {
     for (auto &iter : m_entities) {
         iter.second->update();
     }
 }
 
-int Lab::run()
+void CollisionLab::initEntities()
 {
-    if (m_window == nullptr) {
-        return 1;
-    }
-    while (m_isRunning) {
-        procEvent();
-        movement();
-        logic();
-        render();
-    }
-    return 0;
+    RectPara rectPara;
+    CirclePara cirPara;
+
+    std::shared_ptr<Entity> rect1 = std::make_shared<Entity>(1);
+    rectPara.pos = { 100, 130 };
+    rect1->init(EntityShape::RECT_SHAPE, &rectPara);
+    std::shared_ptr<Entity> cir11 = std::make_shared<Entity>(1000);
+    cirPara.pos = rectPara.pos + Vec2(cirPara.r, cirPara.r);
+    // cirPara.pos.print("cir11");
+    cir11->init(EntityShape::CIRCLE_SHAPE, &cirPara);
+
+    m_entities["rect1"] = rect1;
+    m_entitiesSeq.push_back(rect1);
+    m_entities["cir11"] = cir11;
+    m_entitiesSeq.push_back(cir11);
+
+    std::shared_ptr<Entity> rect2 =std::make_shared<Entity>(1);
+    rectPara.pos = { 760, 130 };
+    rect2->init(EntityShape::RECT_SHAPE, &rectPara);
+    std::shared_ptr<Entity> cir21 = std::make_shared<Entity>(1000);
+    cirPara.pos = rectPara.pos + Vec2(cirPara.r, cirPara.r);
+    // cirPara.pos.print("cir21");
+    cir21->init(EntityShape::CIRCLE_SHAPE, &cirPara);
+
+    m_entities["rect2"] = rect2;
+    m_entitiesSeq.push_back(rect2);
+    m_entities["cir21"] = cir21;
+    m_entitiesSeq.push_back(cir21);
+
+    std::sort(m_entitiesSeq.begin(), m_entitiesSeq.end(),
+        [](const auto &a, const auto &b){
+            return a->zIndex() < b->zIndex();
+    });
 }
 
-void Lab::procEvent()
-{
-    sf::Event event;
-    while (m_window->pollEvent(event)) {
-        switch (event.type) {
-            case sf::Event::EventType::KeyPressed:
-                procKeypress(event.key);
-                break;
-            case sf::Event::Closed:
-                m_isRunning = false;
-                break;
-            default:
-                break;
-        }
-    }
-}
 
-void Lab::procKeypress(sf::Event::KeyEvent kEvent)
-{
-    switch (kEvent.code) {
-        case sf::Keyboard::Key::Q:
-            m_isRunning = false;
-        default:
-            break;
-    }
-}
 
-void Lab::logic()
+void CollisionLab::logic()
 {
     if (!m_init) {
         initLogic();
         m_init = true;
     }
 
-    labNormalCollisionDetect();
-    labContinuousCollisionDetect();
+    collisionDetect();
     updateCorrection();
 }
 
-void Lab::initLogic()
+void CollisionLab::initLogic()
 {
     auto cir11 = m_entities["cir11"];
     // cir11->acc = { 0, 5.0f };
@@ -298,7 +253,7 @@ void Lab::initLogic()
     cir21->pos.x = 1025.0f;
 }
 
-void Lab::movement()
+void CollisionLab::movement()
 {
     for (auto &iter : m_entities) {
         auto shape = iter.second->shape();
@@ -320,21 +275,15 @@ void Lab::movement()
     }
 }
 
-void Lab::render()
+void CollisionLab::collisionDetect()
 {
-    m_window->clear(sf::Color::Black);
-    for (auto &iter : m_entitiesSeq) {
-        if (iter != nullptr) {
-            auto shape = iter->shape();
-            m_window->draw(*shape);
-        }
-    }
-    m_window->display();
+    labNormalCollisionDetect();
+    labContinuousCollisionDetect();
 }
 
 int main(int argc, char* argv[])
 {
-    Lab l(60);
+    CollisionLab l(60);
     l.init();
     return l.run();
 }
