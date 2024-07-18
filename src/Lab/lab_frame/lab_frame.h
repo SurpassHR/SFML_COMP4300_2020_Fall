@@ -44,7 +44,7 @@ public:
     {
         return m_zIndex;
     }
-    void update();
+    virtual void update();
 public:
     Vec2 pos{ 0.0f, 0.0f };
     Vec2 lastPos{ 0.0f, 0.0f };
@@ -64,18 +64,15 @@ private:
 
 class LabFrame {
 public:
-    LabFrame(unsigned frameLimit) : m_frameLimit(frameLimit), m_deltaT(1.0f / frameLimit) {}
+    LabFrame(unsigned frameLimit = 60, Vec2 windowSize = { 1024, 720 }, std::string title = "lab frame")
+        : m_frameLimit(frameLimit),
+          m_deltaT(1.0f / frameLimit),
+          m_windowSize(windowSize),
+          m_title() {}
     virtual ~LabFrame() = default;
 public:
     int init();
     int run();
-protected:
-    std::shared_ptr<sf::RenderWindow> m_window;
-    unsigned m_frameLimit{ 60 };
-    double m_deltaT{ 1 };
-    std::map<std::string, std::shared_ptr<Entity>> m_entities;
-    std::vector<std::shared_ptr<Entity>> m_entitiesSeq;
-    bool m_isRunning{ true };
 protected:
     virtual void initEntities() {}
 
@@ -86,6 +83,18 @@ protected:
     void render();
     virtual void collisionDetect() {}
     virtual void updateCorrection() {}
+
+    const double &deltaT() { return m_deltaT; }
+protected:
+    std::shared_ptr<sf::RenderWindow> m_window;
+    std::map<std::string, std::shared_ptr<Entity>> m_entities;
+    std::vector<std::shared_ptr<Entity>> m_entitiesSeq;
+    bool m_isRunning{ true };
+private:
+    const unsigned m_frameLimit;
+    const double m_deltaT;
+    const Vec2 m_windowSize;
+    const std::string m_title;
 };
 
 #endif // LAB_FRAME_H

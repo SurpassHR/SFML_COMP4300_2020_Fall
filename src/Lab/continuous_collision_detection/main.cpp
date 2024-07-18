@@ -3,78 +3,6 @@
 #include "utils.h"
 #include <SFML/Window/Event.hpp>
 
-void Entity::init(EntityShape shape, const void *para)
-{
-    switch (shape) {
-        case EntityShape::CIRCLE_SHAPE: {
-            m_circle = std::make_shared<sf::CircleShape>();
-            CirclePara *cirPara = reinterpret_cast<CirclePara *>(const_cast<void *>(para));
-            initCircle(m_circle, *cirPara);
-            break;
-        }
-        case EntityShape::RECT_SHAPE: {
-            m_rect = std::make_shared<sf::RectangleShape>();
-            RectPara *rectPara = reinterpret_cast<RectPara *>(const_cast<void *>(para));
-            initRect(m_rect, *rectPara);
-            break;
-        }
-        default:
-            LOG("invalid shape err");
-            break;
-    }
-    m_shape = shape;
-}
-
-std::shared_ptr<sf::Shape> Entity::shape()
-{
-    switch (m_shape) {
-        case EntityShape::CIRCLE_SHAPE:
-            return m_circle;
-        case EntityShape::RECT_SHAPE:
-            return m_rect;
-        default:
-            break;
-    }
-    return nullptr;
-}
-
-void Entity::update()
-{
-    shape()->setPosition(pos.vec2f());
-}
-
-void Entity::initCircle(std::shared_ptr<sf::CircleShape> e, const CirclePara &para)
-{
-    if (e == nullptr) {
-        LOG("nullptr err");
-        return;
-    }
-    e->setRadius(para.r);
-    e->setPosition(para.pos.vec2f());
-    e->setOrigin(para.origin.vec2f());
-    e->setFillColor(para.fColor);
-    e->setOutlineColor(para.oColor);
-    e->setOutlineThickness(para.oThick);
-    pos = para.pos;
-    r = para.r;
-}
-
-void Entity::initRect(std::shared_ptr<sf::RectangleShape> e, const RectPara &para)
-{
-    if (e == nullptr) {
-        LOG("nullptr err");
-        return;
-    }
-    e->setSize(para.size.vec2f());
-    e->setPosition(para.pos.vec2f());
-    e->setOrigin(para.origin.vec2f());
-    e->setFillColor(para.fColor);
-    e->setOutlineColor(para.oColor);
-    e->setOutlineThickness(para.oThick);
-    pos = para.pos;
-    size = para.size;
-}
-
 void CollisionLab::labNormalCollisionDetect()
 {
     Entity lab = *m_entities["rect1"];
@@ -264,10 +192,10 @@ void CollisionLab::movement()
             auto &lastPos = iter.second->lastPos;
 
             // Δv = aΔt
-            Vec2 deltaV = acc * m_deltaT;
+            Vec2 deltaV = acc * deltaT();
             velo += deltaV;
             // Δd = 1/2 vΔt
-            Vec2 deltaD = velo * m_deltaT * 0.5f;
+            Vec2 deltaD = velo * deltaT() * 0.5f;
             pos += deltaD;
 
             lastPos = pos;
