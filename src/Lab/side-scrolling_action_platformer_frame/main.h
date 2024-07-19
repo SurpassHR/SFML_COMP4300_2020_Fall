@@ -21,13 +21,20 @@ private:
     void initEntities() override;
 
     void initGround();
+    void initPlayer();
 
     void logic() override;
+
+    void initLogic();
+
     void movement() override;
+    void render() override;
     void collisionDetect() override;
     void updateCorrection() override;
 private:
     std::map<std::string, std::vector<std::shared_ptr<Entity>>> m_entityMap;
+    bool m_logicInit{ false };
+    std::shared_ptr<Entity> m_player;
 };
 
 #endif // MAIN_H

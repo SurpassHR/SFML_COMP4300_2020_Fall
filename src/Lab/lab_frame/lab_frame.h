@@ -80,7 +80,7 @@ protected:
     void procKeypress(sf::Event::KeyEvent kEvent);
     virtual void logic() {}
     virtual void movement() {}
-    void render();
+    virtual void render();
     virtual void collisionDetect() {}
     virtual void updateCorrection() {}
 
